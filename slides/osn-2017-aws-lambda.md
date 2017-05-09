@@ -145,3 +145,17 @@ class: slide-secondary
 ---
 
 # Demo - 
+
+---
+
+# Questions?
+
+### Slides and demo code available online: http://github.com/aerisweather
+
+#### .inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
+#### Free Demo Accounts API and Maps: https://aerisweather.com
+
+## Thanks!
+
+### Seth Miller https://github.com/four43
+### Edan Schwartz https://github.com/eschwartz
