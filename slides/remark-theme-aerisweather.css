@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300i,400,700|Open+Sans|Ubuntu+Mono:400,700,400italic');
+
+body {
+	font-family: 'Open Sans';
+}
+
+h1, h2, h3 {
+	font-family: 'Lato Thin';
+	font-weight: normal;
+}
+
+.remark-slide-content h1 {
+
+}
+
+.remark-slide-content h2 {
+	font-family: 'Open Sans';
+	font-size: 2em;
+	font-style: italic;
+}
+
+ol ol {
+	list-style-type: lower-alpha;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+ol li p {
+	margin: 0;
+}
+
+/* Slide Styles */
+.slide-title {
+	background-color: #15a8e1;
+	background-image: url(./images/backgrounds/fwind-speeds-blurred.png);
+	background-size: cover;
+	color: #EEE;
+}
+
+.slide-title h1 {
+	background-color: #15a8e1;
+	padding: 5px;
+}
+
+.slide-title h2 {
+	background-color: rgba(9, 25, 37, .9);
+	padding: 5px;
+}
+
+.slide-title-alt {
+	background-color: #e08c16;
+	color: #EEE;
+}
+
+.slide-title-alt h1 {
+	font-size: 4em;
+}
+
+.slide-title-alt h2 {
+	font-size: 1.8em;
+}
+
+.slide-primary {
+	background-color: rgb(9, 25, 37);
+	color: #EEE;
+}
+
+.slide-primary h1 {
+	color: #15a8e1;
+}
+
+.slide-secondary {
+	background-color: rgb(9, 25, 37);
+	color: #EEE;
+}
+
+.slide-secondary h1 {
+	color: #e08c16;
+}
+
+.slide-secondary .summary {
+	color: #6a9bb0;
+}
+
+/* Specific Styles */
+.inline-logo img {
+	height: 2em;
+	vertical-align: middle;
+}
+
+h1 .inline-icon img {
+	height: 1em;
+	display: block;
+	float: right;
+}
+
+.summary {
+	display: block;
+	text-align: center;
+	font-weight: bold;
+	color: #ffc880;
+}
+
+.remark-container {
+	background-color: rgb(6, 15, 23);
+}
+
+.remark-slide-scaler {
+	box-shadow: rgb(9, 25, 37) 0px 0px 30px 0px;
+}
+
+.remark-code, .remark-inline-code {
+	font-family: 'Ubuntu Mono';
+}
