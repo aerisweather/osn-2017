@@ -5,8 +5,10 @@
   "main": "main.js",
   "dependencies": {
     "aws-sdk": "^2.49.0",
+    "gm": "^1.23.0",
     "moment": "^2.18.1",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

@@ -1,7 +1,6 @@
-const crypto = require('crypto');
-const fs = require('fs');
 const gm = require('gm');
 const path = require('path');
+const uuid = require('uuid/v4');
 
 const Lambda = require('aws-sdk').Lambda;
 const S3 = require('aws-sdk').S3;
@@ -14,47 +13,34 @@ const lambda = new Lambda();
 const s3 = new S3();
 
 exports.handler = async function (event, context, callback) {
-	let tmpPath;
-	let thumbnailPath;
-
-	function errorHandler(error) {
-		// We had an error somewhere we didn't expect...
-		if(tmpPath) {
-			// Remove our temporary file, if we had one
-			fs.unlinkSync(tmpPath);
-		}
-		callback(error);
-	}
 
 	try {
 		console.log(`Got event: `, event);
-		tmpPath = getTmpPath(event);
 
 		// Download from S3
-		fs.createWriteStream(tmpPath);
-		s3.getObject(event.location).createReadStream()
-			.on('error', errorHandler)
-			.pipe(file)
-			.on('error', errorHandler);
+		const srcImageLocation = event.payload.location;
+		console.log(`Creating stream from: ${JSON.stringify(srcImageLocation)}`)
+		const s3ReadStream = s3.getObject(srcImageLocation).createReadStream()
+			.on('error', callback);
 
-		// Convert Image
-		thumbnailPath = getTmpPath(event, '.thumb');
-		await createThumbnail({
-			inputPath: tmpPath,
-			outputPath: thumbnailPath,
+		// Get conversion stream
+		const thumbnailReadStream = getThumbnailStream({
+			inputStream: s3ReadStream,
 			width: event.payload.width,
 			height: event.payload.height
-		});
+		})
+			.on('error', callback);
 
 		// Save back to S3
+		const config = event.payload;
 		const outputLocation = {
-			Bucket: S3_OUTPUT_BUCKET,
-			Key: `${S3_OUTPUT_PREFIX}/${path.basename(thumbnailPath)}`
+			bucket: S3_OUTPUT_BUCKET,
+			key: `${S3_OUTPUT_PREFIX}/${config.imageId}/${config.width}x${config.height}/${uuid()}${path.basename(config.location.key)}`
 		};
-		const thumbnailReadStream = fs.createReadStream(thumbnailPath);
 		await new Promise((resolve, reject) => {
 			const s3Params = {
-				...outputLocation,
+				Bucket: outputLocation.bucket,
+				Key: outputLocation.key,
 				Body: thumbnailReadStream
 			};
 			s3.upload(s3Params, function(err, metadata) {
@@ -68,10 +54,7 @@ exports.handler = async function (event, context, callback) {
 			payload: {
 				imageId: event.payload.imageId,
 				validTime: event.payload.imageId,
-				location: {
-					bucket: outputLocation.Bucket,
-					key: outputLocation.Key
-				}
+				location: outputLocation
 			}
 		};
 
@@ -83,32 +66,22 @@ exports.handler = async function (event, context, callback) {
 				Payload:        [resultMessage]
 			},
 			function (err, result) {
-				// Called lambda function, all done!
-				callback(null, true);
+				if(err) return callback(err);
+				// Successfully sent result to the mediator!
+				callback(resultMessage);
 			});
 	}
 	catch (error) {
-		errorHandler(error);
+		callback(error);
 	}
 };
 
-function getTmpPath(event, suffix) {
-	const s3Key = event.location.key;
-	const extension = path.extname(s3Key);
-	return `/tmp/${md5(s3Key)}${suffix}${extension}`;
-}
-
-function md5(input) {
-	return crypto.createHash('md5').update(input).digest("hex");
-}
-
-function createThumbnail(options) {
-	return new Promise((resolve, reject) => {
-		gm(options.inputPath)
+/**
+ * @param {{inputStream:stream.Readable, width:number, height:number}}options
+ * @return stream.Readable
+ */
+function getThumbnailStream(options) {
+	return gm(options.inputStream)
 			.resize(options.width, options.height)
-			.write(options.outputPath, function (err) {
-				if(err) return reject(err);
-				return resolve(options.outputPath);
-			});
-	})
+			.stream();
 }
