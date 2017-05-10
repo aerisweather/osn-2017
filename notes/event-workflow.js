@@ -19,7 +19,10 @@
 		payload: {
 			imageId: 'severe',
 			validTime: new Date(),
-			location: 's3://osn-demo/....'
+			location: {
+				bucket: 'osn-demo',
+				key: 'amp-image-fetcher/severe/something.jpeg'
+			}
 		}
 	},
 
@@ -32,7 +35,10 @@
 			validTime: new Date(),
 			width: 100,
 			height: 100,
-			location: 's3://osn-demo/....'
+			location: {
+				bucket: 'osn-demo',
+				key: 'amp-image-fetcher/severe/something.jpeg'
+			}
 		}
 	},
 	{
@@ -40,7 +46,10 @@
 		payload: {
 			imageId: 'severe',
 			validTime: new Date(),
-			location: '...'
+			location: {
+				bucket: 'osn-demo',
+				key: 'thumbnail-generator/severe/something.thumb.jpeg'
+			}
 		}
 	},
 
@@ -52,7 +61,19 @@
 			imageId: 'severe',
 			minValidTime: new Date(),
 			maxValidTime: new Date(),
-			locations: ['s3://osn-demo/....', 's3://osn-demo/....', 's3://osn-demo/....']
+			locations: [
+				{
+					bucket: 'osn-demo',
+					key: 'amp-image-fetcher/severe/something-a.jpeg'
+				},
+				{
+					bucket: 'osn-demo',
+					key: 'amp-image-fetcher/severe/something-b.jpeg'
+				},
+				{
+					bucket: 'osn-demo',
+					key: 'amp-image-fetcher/severe/something-c.jpeg'
+				}]
 		}
 	},
 	{
@@ -60,7 +81,10 @@
 		imageId: 'severe',
 		minValidTime: new Date(),
 		maxValidTime: new Date(),
-		location: 's3://osn-demo/....'
+		location: {
+			bucket: 'osn-demo',
+			key: 'gif-creator/severe/something.gif'
+		}
 	},
 
 
