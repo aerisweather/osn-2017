@@ -11,7 +11,8 @@ module.exports = async (event, context, callback) => {
 			`/${event.payload.layers.join(',')}`,
 			`/${event.payload.width}x${event.payload.height}`,
 			`/${event.payload.center},${event.payload.zoom}`,
-			`/${moment(event.payload.validTime).format('YYMMDDHHmmss')}`
+			`/${moment(event.payload.validTime).format('YYMMDDHHmmss')}`,
+			`.png`
 		].join('');
 
 		const readStream = request(`http://maps.aerisapi.com/${endpoint}`);
