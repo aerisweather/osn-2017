@@ -76,11 +76,3 @@ exports.handler = async function (event, context, callback) {
 		callback(error);
 	}
 };
-
-/**
- * @param {{inputStream:stream.Readable, width:number, height:number}}options
- * @return stream.Readable
- */
-function getThumbnailStream(options) {
-	return
-}
