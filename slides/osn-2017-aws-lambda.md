@@ -11,7 +11,7 @@ Good luck! We got this!
 ---
 class: slide-secondary
 
-# What is Lambda (Real Quick)?
+# What is Lambda? (Real Quick!)
 
 1. Functional and Stateless Compute - Give it code and an input
 	1. Reacts to various AWS events
@@ -19,7 +19,7 @@ class: slide-secondary
 	1. API Events via API Gateway
 --
 count: false
-1. Charged per 100ms used
+1. Charged per 100ms used at CPU/RAM levels
 	1. EC2 is hourly
 --
 count: false
@@ -98,24 +98,26 @@ class: slide-primary
 ---
 class: left, middle, slide-title-alt
 # Data Flow Pattern .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
-## A smart Mediator leading Dumb Workers
+## Coordinating microservices (like Lambda)
 
 ---
 name:data-flow-pattern
 # Data Flow Pattern
+## A smart way to handle microservices
 
 1. Based on Simple Workflow Service
-	1. Not really "Simple"
+	1. SWS didn't really seem "Simple"
 	1. Verbose config for each thing
 	1. Forking workflows difficult
-1. Why?
-	1. Workflow
+1. Why Data Flow?
+	1. Need more advanced Workflows
 	1. Microservice coordination
 
 ---
+class: slide-primary
 # Data Flow Architecture
 
-1. Smart Mediator - The Brains
+1. Smart Mediator - The Brains .img-float-right[.size-height-150px[![Mediator](./images/diagrams/mediator.svg)]]
 	1. Config lives
 	1. Decider
 	1. DB Requests
@@ -123,10 +125,12 @@ name:data-flow-pattern
 --
 count: false
 
-1. Dumb Workers - "Pure" Functions
+1. Dumb Workers - "Pure" Functions .img-float-right[.size-height-150px[![Worker](./images/diagrams/worker.svg)]]
 	1. Take in single type of message
 	1. Do work described in message
 	1. Output result description back to mediator
+	
+.summary[A smart mediator leads dumb workers, update independently]
 	
 ---
 class: left, middle, slide-title-alt
@@ -143,8 +147,10 @@ class: slide-secondary
 1. Once we have all frames, create weather gif
 
 ---
+class: slide-secondary
+# Demo - Design
 
-# Demo - 
+.center[.size-height-600px[![Data Flow Icon](./images/diagrams/demo-full.svg)]]
 
 ---
 

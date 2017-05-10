@@ -9,10 +9,6 @@ h1, h2, h3 {
 	font-weight: normal;
 }
 
-.remark-slide-content h1 {
-
-}
-
 .remark-slide-content h2 {
 	font-family: 'Open Sans';
 	font-size: 2em;
@@ -27,6 +23,13 @@ ol ol {
 
 ol li p {
 	margin: 0;
+}
+
+.summary {
+	display: block;
+	text-align: center;
+	font-weight: bold;
+	color: #000;
 }
 
 /* Slide Styles */
@@ -69,6 +72,10 @@ ol li p {
 	color: #15a8e1;
 }
 
+.slide-primary .summary {
+	color: #ffc880;
+}
+
 .slide-secondary {
 	background-color: rgb(9, 25, 37);
 	color: #EEE;
@@ -94,11 +101,21 @@ h1 .inline-icon img {
 	float: right;
 }
 
-.summary {
+.img-float-right {
 	display: block;
-	text-align: center;
-	font-weight: bold;
-	color: #ffc880;
+	float: right;
+}
+.img-float-right img  {
+	display: block;
+	float: right;
+}
+
+.size-height-150px * {
+	height: 150px;
+}
+
+.size-height-600px * {
+	height: 600px;
 }
 
 .remark-container {
