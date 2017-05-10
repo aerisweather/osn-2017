@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "noImplicitAny": true,
+    "importHelpers": true,
+    "lib":["es6", "scripthost", "dom"],
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "fetch-image-worker/src/**/*.ts",
+    "test/**/*.ts",
+    "deploy/**/*.ts",
+    "scripts/**/*.ts"
+  ]
+}
