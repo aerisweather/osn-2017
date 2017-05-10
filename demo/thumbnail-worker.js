@@ -13,29 +13,27 @@ const lambda = new Lambda();
 const s3 = new S3();
 
 exports.handler = async function (event, context, callback) {
-
 	try {
+
 		console.log(`Got event: `, event);
+		const payload = event.payload;
 
 		// Download from S3
-		const srcImageLocation = event.payload.location;
+		const srcImageLocation = payload.location;
 		console.log(`Creating stream from: ${JSON.stringify(srcImageLocation)}`)
 		const s3ReadStream = s3.getObject(srcImageLocation).createReadStream()
 			.on('error', callback);
 
 		// Get conversion stream
-		const thumbnailReadStream = getThumbnailStream({
-			inputStream: s3ReadStream,
-			width: event.payload.width,
-			height: event.payload.height
-		})
+		const thumbnailReadStream = gm(s3ReadStream)
+			.resize(payload.width, payload.height)
+			.stream()
 			.on('error', callback);
 
 		// Save back to S3
-		const config = event.payload;
 		const outputLocation = {
 			bucket: S3_OUTPUT_BUCKET,
-			key: `${S3_OUTPUT_PREFIX}/${config.imageId}/${config.width}x${config.height}/${uuid()}${path.basename(config.location.key)}`
+			key: `${S3_OUTPUT_PREFIX}/${payload.imageId}/${payload.width}x${payload.height}/${uuid()}${path.basename(srcImageLocation.key)}`
 		};
 		await new Promise((resolve, reject) => {
 			const s3Params = {
@@ -43,8 +41,10 @@ exports.handler = async function (event, context, callback) {
 				Key: outputLocation.key,
 				Body: thumbnailReadStream
 			};
+			console.log(`Sending to S3 ${JSON.stringify(outputLocation)} ...`);
 			s3.upload(s3Params, function(err, metadata) {
 				if(err) return reject(err);
+				console.log("Done sending to S3.");
 				return resolve(metadata);
 			});
 		});
@@ -59,6 +59,7 @@ exports.handler = async function (event, context, callback) {
 		};
 
 		// Send the result back to the mediator
+		console.log("Sending message to the mediator...");
 		lambda.invoke({
 				FunctionName:   MEDIATOR_FUNCTION_NAME,
 				Qualifier:      '$LATEST',
@@ -81,7 +82,5 @@ exports.handler = async function (event, context, callback) {
  * @return stream.Readable
  */
 function getThumbnailStream(options) {
-	return gm(options.inputStream)
-			.resize(options.width, options.height)
-			.stream();
+	return
 }
