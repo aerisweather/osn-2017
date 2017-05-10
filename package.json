@@ -1,0 +1,18 @@
+{
+  "name": "osn-talk",
+  "version": "0.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/hamweather/osn-talk-2017.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "homepage": "https://bitbucket.org/hamweather/osn-talk-2017#readme"
+}
