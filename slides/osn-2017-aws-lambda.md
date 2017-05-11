@@ -102,8 +102,9 @@ class: left, middle, slide-title-alt
 
 ---
 name:data-flow-pattern
+class: slide-secondary
 # Data Flow Pattern
-## A smart way to handle microservices
+## A smart way to organize microservices
 
 1. Based on Simple Workflow Service
 	1. SWS didn't really seem "Simple"
@@ -112,9 +113,12 @@ name:data-flow-pattern
 1. Why Data Flow?
 	1. Need more advanced Workflows
 	1. Microservice coordination
+	1. Avoid sequential spaghetti with a common interface
 
+???
+More than a bunch of random functions calling each other
 ---
-class: slide-primary
+class: slide-secondary
 # Data Flow Architecture
 
 1. Smart Mediator - The Brains .img-float-right[.size-height-150px[![Mediator](./images/diagrams/mediator.svg)]]

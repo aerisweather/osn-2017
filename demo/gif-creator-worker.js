@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+const fs = require('fs');
 const gm = require('gm');
 const path = require('path');
 const uuid = require('uuid/v4');
@@ -13,45 +15,59 @@ const lambda = new Lambda();
 const s3 = new S3();
 
 exports.handler = async function (event, context, callback) {
-	try {
+	let imgPaths = [];
 
+	function errorHandler(err) {
+		// Make sure we cleanup our downloaded files if we have a problem.
+		imgPaths.map(fs.unlinkSync);
+		callback(err);
+	}
+
+	try {
 		console.log(`Got event: `, event);
 		const payload = event.payload;
 
-		// Download from S3
-		const srcImageLocation = payload.location;
-		console.log(`Creating stream from: ${JSON.stringify(srcImageLocation)}`);
-		const s3ReadStream = s3.getObject(srcImageLocation).createReadStream()
-			.on('error', callback);
+		// We can't stream multiple files to make a gif, download it is.
+		imgPaths = await Promise.all(
+			event.payload.locations.map(downloadImage)
+		);
 
-		// @todo I think we have to download each image, can't do just streams
+		// Get conversion stream
+		imgPaths.reduce((gifConverter, imgPath) => {
+			gifConverter = gifConverter.in(imgPath);
+			return gifConverter;
+		}, gm());
+
+		const gifStream = gifConverter
+			.delay(100)
+			.stream()
+			.on('error', errorHandler);
 
 		// Save back to S3
 		const outputLocation = {
 			bucket: S3_OUTPUT_BUCKET,
-			// @todo change key
-			key: `${S3_OUTPUT_PREFIX}/${payload.imageId}/${payload.width}x${payload.height}/${uuid()}${path.basename(srcImageLocation.key)}`
+			key:    `${S3_OUTPUT_PREFIX}/${payload.imageId}/${uuid()}${path.basename(srcImageLocation.key)}`
 		};
 		await new Promise((resolve, reject) => {
 			const s3Params = {
 				Bucket: outputLocation.bucket,
-				Key: outputLocation.key,
-				Body: thumbnailReadStream
+				Key:    outputLocation.key,
+				Body:   gifStream
 			};
 			console.log(`Sending to S3 ${JSON.stringify(outputLocation)} ...`);
-			s3.upload(s3Params, function(err, metadata) {
-				if(err) return reject(err);
+			s3.upload(s3Params, function (err, metadata) {
+				if (err) return reject(err);
 				console.log("Done sending to S3.");
 				return resolve(metadata);
 			});
 		});
 
 		const resultMessage = {
-			type: 'did-create-thumbnail',
+			type:    'did-create-thumbnail',
 			payload: {
-				imageId: event.payload.imageId,
+				imageId:   event.payload.imageId,
 				validTime: event.payload.imageId,
-				location: outputLocation
+				location:  outputLocation
 			}
 		};
 
@@ -64,12 +80,49 @@ exports.handler = async function (event, context, callback) {
 				Payload:        [resultMessage]
 			},
 			function (err, result) {
-				if(err) return callback(err);
+				if (err) return errorHandler(err);
 				// Successfully sent result to the mediator!
 				callback(resultMessage);
 			});
 	}
 	catch (error) {
-		callback(error);
+		errorHandler(error)
 	}
 };
+
+async function downloadImage(srcLocation) {
+	return new Promise((resolve, reject) => {
+
+		// Get unique output path
+		const outputPath = getTmpPath(srcLocation);
+
+		console.log(`Downloading ${JSON.stringify(srcLocation)} ...`);
+		const s3ReadStream = s3.getObject(srcLocation).createReadStream()
+			.on('error', reject);
+
+		const fileWriteStream = fs.createWriteStream(outputPath)
+			.on('error', reject);
+
+		// Start downloading - Stream from S3 -> Unique output path
+		s3ReadStream.pipe(fileWriteStream)
+			.on('finish', () => {
+				console.log(`Done downloading ${JSON.stringify(srcLocation)} to ${outputPath}`);
+				return resolve(outputPath);
+			});
+	});
+}
+
+/**
+ * @param {{bucket: string, key:string}} location
+ * @param {string} [suffix=""]
+ * @return {string}
+ */
+function getTmpPath(location, suffix) {
+	const s3Key = location.key;
+	const extension = path.extname(s3Key);
+	return `/tmp/${md5(s3Key)}${suffix}${extension}`;
+}
+
+function md5(input) {
+	return crypto.createHash('md5').update(input).digest("hex");
+}
