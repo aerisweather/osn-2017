@@ -157,9 +157,18 @@ class: slide-secondary
 .center[.size-height-600px[![Data Flow Icon](./images/diagrams/demo-full.svg)]]
 
 ---
-
+@ todo:
+Security:
+1. Mediator in a VPC, others outside
+	1. Mediator needs access to private resources, no internet access
+	1. Workers that need internet access should be outside of VPC (costly inside)
+1. Environment config on S3
+	1. Encrypt at rest.
 State in a stateless environment - concurrent everything, offload that to db
+ * Eventual concurrency here is bad. Lots can happen "at once"
 Emphasize CI
+Where else will you hit a scaling issue? Once you "leave lambda"
+ * For us it was after our import was done
 
 ---
 
