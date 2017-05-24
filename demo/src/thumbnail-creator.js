@@ -31,10 +31,10 @@ exports.handler = async function (event, context, callback) {
 			key: `/thumbnail-generator/${payload.imageId}/${payload.width}x${payload.height}/${uuid()}${path.basename(srcImageLocation.key)}`
 		};
 		await s3.upload({
-      Bucket: outputLocation.bucket,
-      Key: outputLocation.key,
-      Body: thumbnailReadStream
-    }).promise();
+			Bucket: outputLocation.bucket,
+			Key: outputLocation.key,
+			Body: thumbnailReadStream
+		}).promise();
 
 		const outMessages = [{
 			type: 'did-create-thumbnail',
@@ -48,10 +48,10 @@ exports.handler = async function (event, context, callback) {
 		// Send a message to the mediator,
 		// to let it know we're done
 		await lambda.invoke({
-      FunctionName:   'mediator',
-      InvocationType: 'Event',
-      Payload:        JSON.stringify(outMessages)
-    }).promise();
+			FunctionName: 'mediator',
+			InvocationType: 'Event',
+			Payload: JSON.stringify(outMessages)
+		}).promise();
 		console.log(`Completed with: ${JSON.stringify(outMessages, null, 2)}`);
 
 		callback(null, outMessages);
