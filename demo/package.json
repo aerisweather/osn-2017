@@ -5,6 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "aws-sdk": "^2.49.0",
+    "gm": "https://registry.npmjs.org/gm/-/gm-1.23.0.tgz",
     "moment": "^2.18.1",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
