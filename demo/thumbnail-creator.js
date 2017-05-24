@@ -36,24 +36,24 @@ exports.handler = async function (event, context, callback) {
       Body: thumbnailReadStream
     }).promise();
 
-		const resultMessage = {
+		const outMessages = [{
 			type: 'did-create-thumbnail',
 			payload: {
 				imageId: event.payload.imageId,
 				validTime: event.payload.imageId,
 				location: outputLocation
 			}
-		};
+		}];
 
 		// Send the result back to the mediator
 		console.log("Sending message to the mediator...");
 		await lambda.invoke({
       FunctionName:   'mediator',
       InvocationType: 'Event',
-      Payload:        [resultMessage]
+      Payload:        outMessages
     }).promise();
 
-		callback(null, resultMessage);
+		callback(null, outMessages);
 	}
 	catch (error) {
 		callback(error);
