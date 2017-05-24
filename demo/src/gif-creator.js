@@ -11,7 +11,7 @@ const s3 = new S3();
 
 exports.handler = async function (event, context, callback) {
 	try {
-		console.log(`Got event: `, event);
+		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
 		const payload = event.payload;
 
 		// Download all images to /tmp/[i].png
