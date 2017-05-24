@@ -21,10 +21,9 @@ const fs = require('fs');
   console.log(`Uploading code to lambda functions...`);
   const lambda = new AWS.Lambda({ region: 'us-east-1' });
   const lambdaFunctions = [
-
     'amp-image-fetcher',
     //'gif-creator',
-    //'thumbnail'
+    'thumbnail-creator'
   ];
   return Promise.all(
     lambdaFunctions.map(fName =>

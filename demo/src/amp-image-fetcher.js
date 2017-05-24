@@ -36,13 +36,13 @@ exports.handler = async (event, context, callback) => {
 		});
 
 		// And upload the image back up to S3
-		const s3Location = {
-			bucket: 'aeris-osn-2017',
-			key: `amp-image-fetcher${endpoint}`
+		const uploadLocation = {
+			Bucket: 'aeris-osn-2017',
+			Key: `amp-image-fetcher${endpoint}`
 		};
 		await s3.upload({
-			Bucket: s3Location.bucket,
-			Key: s3Location.key,
+			Bucket: uploadLocation.Bucket,
+			Key: uploadLocation.Key,
 			Body: image
 		}).promise();
 
@@ -53,7 +53,7 @@ exports.handler = async (event, context, callback) => {
 			payload: {
 				imageId: event.payload.imageId,
 				validTime: event.payload.validTime,
-				location: s3Location
+				location: uploadLocation
 			}
 		}];
 		await lambda.invoke({

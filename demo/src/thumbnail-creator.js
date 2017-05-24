@@ -1,6 +1,7 @@
 const gm = require('gm');
 const path = require('path');
 const uuid = require('uuid/v4');
+const sharp = require('sharp');
 
 const Lambda = require('aws-sdk').Lambda;
 const S3 = require('aws-sdk').S3;
@@ -8,40 +9,54 @@ const S3 = require('aws-sdk').S3;
 const lambda = new Lambda();
 const s3 = new S3();
 
+/**
+ * Payload:
+ * {
+ * 	 imageId: string;
+ * 	 location: { Bucket: string; Key: string; };
+ * 	 height: number;
+ * 	 width: number;
+ * 	 validTime: Date 		// ISO string
+ * }
+ */
 exports.handler = async function (event, context, callback) {
 	try {
-		console.log(`Got event: `, event);
-		const payload = event.payload;
+		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
 
 		// Download from S3
+		const payload = event.payload;
 		const srcImageLocation = payload.location;
-		console.log(`Creating stream from: ${JSON.stringify(srcImageLocation)}`);
-		const s3ReadStream = s3.getObject(srcImageLocation).createReadStream()
+		const s3ReadStream = s3.getObject(payload.location)
+			.createReadStream()
 			.on('error', callback);
 
-		// Get conversion stream
-		const thumbnailReadStream = gm(s3ReadStream)
-			.resize(payload.width, payload.height)
-			.stream()
-			.on('error', callback);
+		// Convert to thumbnail
+		const thumbnailReadStream = s3ReadStream
+			.pipe(sharp().resize(200, 200).png());
 
 		// Save back to S3
-		const outputLocation = {
-			bucket: 'aeris-osn-2017',
-			key: `/thumbnail-generator/${payload.imageId}/${payload.width}x${payload.height}/${uuid()}${path.basename(srcImageLocation.key)}`
+		const uploadLocation = {
+			Bucket: 'aeris-osn-2017',
+			Key: [
+				`thumbnail-creator`,
+				`/${payload.imageId}`,
+				`/${payload.width}x${payload.height}`,
+				`/${uuid()}`,
+				path.basename(srcImageLocation.Key)
+			].join('')
 		};
 		await s3.upload({
-			Bucket: outputLocation.bucket,
-			Key: outputLocation.key,
+			Bucket: uploadLocation.Bucket,
+			Key: uploadLocation.Key,
 			Body: thumbnailReadStream
 		}).promise();
 
 		const outMessages = [{
 			type: 'did-create-thumbnail',
 			payload: {
-				imageId: event.payload.imageId,
-				validTime: event.payload.imageId,
-				location: outputLocation
+				imageId: payload.imageId,
+				validTime: payload.validTime,
+				location: uploadLocation
 			}
 		}];
 
