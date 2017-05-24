@@ -8,6 +8,7 @@
     "gm": "^1.23.0",
     "moment": "^2.18.1",
     "request": "^2.81.0",
+    "request-promise": "^4.2.1",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
@@ -17,7 +18,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel ./src -d --out-dir build --ignore node_modules",
-    "deploy": "rm -f ./build; npm run build && ./deploy.js"
+    "deploy": "rm -rf ./build; npm run build && ./deploy.js"
   },
   "repository": {
     "type": "git",

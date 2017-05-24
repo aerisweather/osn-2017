@@ -58,6 +58,11 @@
       "resolved": "https://registry.npmjs.org/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.1.tgz",
       "optional": true
     },
+    "bluebird": {
+      "version": "3.5.0",
+      "from": "bluebird@>=3.5.0 <4.0.0",
+      "resolved": "https://registry.npmjs.org/bluebird/-/bluebird-3.5.0.tgz"
+    },
     "boom": {
       "version": "2.10.1",
       "from": "boom@>=2.0.0 <3.0.0",
@@ -319,8 +324,18 @@
     },
     "request": {
       "version": "2.81.0",
-      "from": "request@>=2.81.0 <3.0.0",
+      "from": "request@latest",
       "resolved": "https://registry.npmjs.org/request/-/request-2.81.0.tgz"
+    },
+    "request-promise": {
+      "version": "4.2.1",
+      "from": "request-promise@latest",
+      "resolved": "https://registry.npmjs.org/request-promise/-/request-promise-4.2.1.tgz"
+    },
+    "request-promise-core": {
+      "version": "1.1.1",
+      "from": "request-promise-core@1.1.1",
+      "resolved": "https://registry.npmjs.org/request-promise-core/-/request-promise-core-1.1.1.tgz"
     },
     "safe-buffer": {
       "version": "5.0.1",
@@ -349,6 +364,11 @@
         }
       }
     },
+    "stealthy-require": {
+      "version": "1.1.1",
+      "from": "stealthy-require@>=1.1.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/stealthy-require/-/stealthy-require-1.1.1.tgz"
+    },
     "stringstream": {
       "version": "0.0.5",
       "from": "stringstream@>=0.0.4 <0.1.0",
@@ -356,7 +376,7 @@
     },
     "tough-cookie": {
       "version": "2.3.2",
-      "from": "tough-cookie@>=2.3.0 <2.4.0",
+      "from": "tough-cookie@>=2.3.0",
       "resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.3.2.tgz",
       "dependencies": {
         "punycode": {
