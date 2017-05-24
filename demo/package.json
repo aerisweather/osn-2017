@@ -16,7 +16,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src -d build"
+    "build": "babel ./src -d --out-dir build --ignore node_modules",
+    "deploy": "rm -f ./build; npm run build && ./deploy.js"
   },
   "repository": {
     "type": "git",
