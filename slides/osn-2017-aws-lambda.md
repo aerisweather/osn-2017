@@ -158,6 +158,11 @@ class: slide-secondary
 
 ---
 
+State in a stateless environment - concurrent everything, offload that to db
+Emphasize CI
+
+---
+
 # Questions?
 
 ### Slides and demo code available online: http://github.com/aerisweather
