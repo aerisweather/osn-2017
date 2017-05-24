@@ -45,13 +45,14 @@ exports.handler = async function (event, context, callback) {
 			}
 		}];
 
-		// Send the result back to the mediator
-		console.log("Sending message to the mediator...");
+		// Send a message to the mediator,
+		// to let it know we're done
 		await lambda.invoke({
       FunctionName:   'mediator',
       InvocationType: 'Event',
-      Payload:        outMessages
+      Payload:        JSON.stringify(outMessages)
     }).promise();
+		console.log(`Completed with: ${JSON.stringify(outMessages, null, 2)}`);
 
 		callback(null, outMessages);
 	}
