@@ -5,10 +5,19 @@ const uuid = require('uuid/v4');
 
 const Lambda = require('aws-sdk').Lambda;
 const S3 = require('aws-sdk').S3;
+const execSync = require('child_process').execSync;
 
 const lambda = new Lambda();
 const s3 = new S3();
 
+/**
+ * Payload:
+ * {
+ * 	 imageId: string;
+ * 	 locations: { Bucket: string; Key: string; }[];
+ * 	 validTime: Date;  // ISO string
+ * }
+ */
 exports.handler = async function (event, context, callback) {
 	try {
 		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
@@ -20,24 +29,14 @@ exports.handler = async function (event, context, callback) {
 				(s3Loc, i) => new Promise((onRes) => {
 					s3.getObject(s3Loc)
 						.createReadStream()
-						.pipe(fs.createWriteStream(`/tmp/${i}`))
-						.on('finish', () => onRes(`/tmp/${i}`))
+						.pipe(fs.createWriteStream(`/tmp/${i}.png`))
+						.on('finish', () => onRes(`/tmp/${i}.png`))
 				})
 			)
 		);
 
 		// Create a GIF from the images
-		// See https://github.com/aheckmann/gm/issues/82#issuecomment-225227703
-		const gmInstance = gm();
-		for (let path of imgPaths) {
-			gmInstance.in(path);
-		}
-		await new Promise((onRes, onErr) => {
-			gmInstance
-				.delay(500)
-				.write('/tmp/animated.gif', err => err ? onErr(err) : onRes())
-		});
-		const gifReadStream = fs.createReadStream('/tmp/animated.gif');
+		execSync(`convert -delay 20 -loop 0 ${imgPaths.join(' ')} /tmp/animated.gif`);
 
 		// Save back to S3
 		const uploadLocation = {
@@ -45,20 +44,19 @@ exports.handler = async function (event, context, callback) {
 			Key: [
 				`gif-creator`,
 				`/${payload.imageId}`,
-				`/${uuid()}`,
-				`${path.basename(payload.location.Key)}`
-			]
+				`/${uuid()}.gif`
+			].join('')
 		};
 		await s3.upload({
 			Bucket: uploadLocation.Bucket,
 			Key: uploadLocation.Key,
-			Body: gifReadStream
+			Body: fs.createReadStream('/tmp/animated.gif')
 		}).promise();
 
 		// Send a message to the mediator,
 		// to let it know we're done
 		const outMessages = [{
-			type: 'did-create-thumbnail',
+			type: 'did-create-gif',
 			payload: {
 				imageId: payload.imageId,
 				validTime: payload.validTime,

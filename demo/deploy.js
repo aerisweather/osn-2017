@@ -22,7 +22,7 @@ const fs = require('fs');
   const lambda = new AWS.Lambda({ region: 'us-east-1' });
   const lambdaFunctions = [
     'amp-image-fetcher',
-    //'gif-creator',
+    'gif-creator',
     'thumbnail-creator'
   ];
   return Promise.all(
