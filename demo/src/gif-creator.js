@@ -43,6 +43,7 @@ exports.handler = async function (event, context, callback) {
 			Key: [
 				`gif-creator`,
 				`/${payload.imageId}`,
+        `/${payload.validTime}`,
 				`/${uuid()}.gif`
 			].join('')
 		};
