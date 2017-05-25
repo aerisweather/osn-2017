@@ -1,4 +1,3 @@
-const gm = require('gm');
 const path = require('path');
 const uuid = require('uuid/v4');
 const sharp = require('sharp');
