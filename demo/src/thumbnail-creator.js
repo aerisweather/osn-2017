@@ -40,6 +40,7 @@ exports.handler = async function (event, context, callback) {
 				`thumbnail-creator`,
 				`/${payload.imageId}`,
 				`/${payload.width}x${payload.height}`,
+				`/${payload.validTime.toISOString()}`,
 				`/${uuid()}`,
 				path.basename(srcImageLocation.Key)
 			].join('')
