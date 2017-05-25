@@ -161,6 +161,9 @@ function isExistingStack() {
 		.then(stackInfo => {
 			return stackInfo.Stacks.length
 		})
+		.catch((err) => {
+			return false;
+		})
 }
 
 function executeChangeSet(template) {
