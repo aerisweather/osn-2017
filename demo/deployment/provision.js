@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 
 AWS.config.loadFromPath(`${__dirname}/../deploy-credentials.ignore.json`);
+// @todo - Figure out how to get a unique bucket name for someone.
 
 // http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html
 const STACK_NAME = 'osn2017-redis';
@@ -122,8 +123,76 @@ const cfTemplate = {
 					}
 				}
 			}
-
-		}
+		},
+		LambdaAmpImageFetcher:     {
+			Type:       'AWS::Lambda::Function',
+			Properties: {
+				FunctionName: 'osn017-amp-image-fetcher',
+				Description:  'Fetches images and saves them to S3',
+				Runtime: 'nodejs6.10',
+				Code: {
+					ZipFile: `exports.handler = (event, context, callback) => {
+						// TODO implement
+						callback(null, 'Hello from Lambda');
+					};`
+				},
+				MemorySize:   512,
+				Timeout:      60,
+				Handler:      'build/amp-image-fetcher.handler',
+				Role:         { 'Fn::GetAtt': [ "LambdaIamRole", "Arn" ]},
+				Environment:  {
+					Variables: {
+						MEDIATOR_ARN: { 'Fn::GetAtt': [ "LambdaMediator", "Arn" ]}
+					}
+				}
+			}
+		},
+		LambdaGifCreator:     {
+			Type:       'AWS::Lambda::Function',
+			Properties: {
+				FunctionName: 'osn017-gif-creator',
+				Description:  'Combines images into a GIF and saves them to S3',
+				Runtime: 'nodejs6.10',
+				Code: {
+					ZipFile: `exports.handler = (event, context, callback) => {
+						// TODO implement
+						callback(null, 'Hello from Lambda');
+					};`
+				},
+				MemorySize:   1024,
+				Timeout:      60,
+				Handler:      'build/gif-creator.handler',
+				Role:         { 'Fn::GetAtt': [ "LambdaIamRole", "Arn" ]},
+				Environment:  {
+					Variables: {
+						MEDIATOR_ARN: { 'Fn::GetAtt': [ "LambdaMediator", "Arn" ]}
+					}
+				}
+			}
+		},
+		LambdaThumbnailCreator:     {
+			Type:       'AWS::Lambda::Function',
+			Properties: {
+				FunctionName: 'osn017-thumbnail-creator',
+				Description:  'Resizes images to thumbnails and saves them to S3',
+				Runtime: 'nodejs6.10',
+				Code: {
+					ZipFile: `exports.handler = (event, context, callback) => {
+						// TODO implement
+						callback(null, 'Hello from Lambda');
+					};`
+				},
+				MemorySize:   128,
+				Timeout:      3,
+				Handler:      'build/thumbnail-creator.handler',
+				Role:         { 'Fn::GetAtt': [ "LambdaIamRole", "Arn" ]},
+				Environment:  {
+					Variables: {
+						MEDIATOR_ARN: { 'Fn::GetAtt': [ "LambdaMediator", "Arn" ]}
+					}
+				}
+			}
+		},
 	}
 };
 
