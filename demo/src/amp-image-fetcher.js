@@ -55,7 +55,7 @@ exports.handler = async (event, context, callback) => {
 			location: uploadLocation
 		}];
 		await lambda.invoke({
-			FunctionName: 'mediator',
+			FunctionName: 'os2017-mediator',
 			InvocationType: 'Event',
 			Payload: JSON.stringify(outMessages)
 		}).promise();
