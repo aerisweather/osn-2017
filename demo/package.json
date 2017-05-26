@@ -20,7 +20,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel ./src -d --out-dir build --ignore node_modules",
-    "deploy": "rm -rf ./build; npm run build && ./deploy.js"
+    "deploy": "rm -rf ./build; npm run build && node ./deployment/provision.js"
   },
   "repository": {
     "type": "git",
