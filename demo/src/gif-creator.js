@@ -20,11 +20,10 @@ const s3 = new S3();
 exports.handler = async function (event, context, callback) {
 	try {
 		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
-		const payload = event.payload;
 
 		// Download all images to /tmp/[i].png
 		const imgPaths = await Promise.all(
-			payload.locations.map(
+			event.locations.map(
 				(s3Loc, i) => new Promise((onRes) => {
 					s3.getObject(s3Loc)
 						.createReadStream()
@@ -42,8 +41,8 @@ exports.handler = async function (event, context, callback) {
 			Bucket: 'aeris-osn-2017',
 			Key: [
 				`gif-creator`,
-				`/${payload.imageId}`,
-        `/${payload.validTime}`,
+				`/${event.imageId}`,
+        `/${event.validTime}`,
 				`/${uuid()}.gif`
 			].join('')
 		};
@@ -57,11 +56,9 @@ exports.handler = async function (event, context, callback) {
 		// to let it know we're done
 		const outMessages = [{
 			type: 'did-create-gif',
-			payload: {
-				imageId: payload.imageId,
-				validTime: payload.validTime,
-				location: uploadLocation
-			}
+			imageId: event.imageId,
+			validTime: event.validTime,
+			location: uploadLocation
 		}];
 		lambda.invoke({
 			FunctionName: 'mediator',

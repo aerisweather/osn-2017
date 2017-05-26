@@ -1,15 +1,13 @@
 {
   "type": "please-fetch-amp-image",
-  "payload": {
-    "imageId": "temps",
-    "layers": [
-      "flat-dk",
-      "temperatures"
-    ],
-    "width": 800,
-    "height": 600,
-    "center": "tulsa,ok",
-    "zoom": 4,
-    "validTime": "2017-05-24T20:57:55.885Z"
-  }
+  "imageId": "temps",
+  "layers": [
+    "flat-dk",
+    "temperatures"
+  ],
+  "width": 800,
+  "height": 600,
+  "center": "tulsa,ok",
+  "zoom": 4,
+  "validTime": "2017-05-24T20:57:55.885Z"
 }

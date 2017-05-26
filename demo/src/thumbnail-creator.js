@@ -23,9 +23,8 @@ exports.handler = async function (event, context, callback) {
 		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
 
 		// Download from S3
-		const payload = event.payload;
-		const srcImageLocation = payload.location;
-		const s3ReadStream = s3.getObject(payload.location)
+		const srcImageLocation = event.location;
+		const s3ReadStream = s3.getObject(event.location)
 			.createReadStream()
 			.on('error', callback);
 
@@ -38,9 +37,9 @@ exports.handler = async function (event, context, callback) {
 			Bucket: 'aeris-osn-2017',
 			Key: [
 				`thumbnail-creator`,
-				`/${payload.imageId}`,
-				`/${payload.width}x${payload.height}`,
-				`/${payload.validTime}`,
+				`/${event.imageId}`,
+				`/${event.width}x${event.height}`,
+				`/${event.validTime}`,
 				`/${uuid()}`,
 				path.basename(srcImageLocation.Key)
 			].join('')
@@ -53,11 +52,9 @@ exports.handler = async function (event, context, callback) {
 
 		const outMessages = [{
 			type: 'did-create-thumbnail',
-			payload: {
-				imageId: payload.imageId,
-				validTime: payload.validTime,
-				location: uploadLocation
-			}
+			imageId: event.imageId,
+			validTime: event.validTime,
+			location: uploadLocation
 		}];
 
 		// Send a message to the mediator,

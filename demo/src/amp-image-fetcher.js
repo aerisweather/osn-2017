@@ -23,10 +23,10 @@ exports.handler = async (event, context, callback) => {
 		// Figure out AMP endpoint, from event payload
 		const endpoint = [
 			`/${process.env.CLIENT_ID}_${process.env.CLIENT_SECRET}`,
-			`/${event.payload.layers.join(',')}`,
-			`/${event.payload.width}x${event.payload.height}`,
-			`/${event.payload.center},${event.payload.zoom}`,
-			`/${moment(event.payload.validTime).format('YYYYMMDDHHmmss')}`,
+			`/${event.layers.join(',')}`,
+			`/${event.width}x${event.height}`,
+			`/${event.center},${event.zoom}`,
+			`/${moment(event.validTime).format('YYYYMMDDHHmmss')}`,
 			`.png`
 		].join('');
 
@@ -50,11 +50,9 @@ exports.handler = async (event, context, callback) => {
 		// to let it know we're done
 		const outMessages = [{
 			type: 'did-fetch-image',
-			payload: {
-				imageId: event.payload.imageId,
-				validTime: event.payload.validTime,
-				location: uploadLocation
-			}
+			imageId: event.imageId,
+			validTime: event.validTime,
+			location: uploadLocation
 		}];
 		await lambda.invoke({
 			FunctionName: 'mediator',

@@ -1,14 +1,12 @@
 {
   "type": "please-create-gif",
-  "payload": {
-    "imageId": "temps",
-    "locations": [
-      { "Bucket": "aeris-osn-2017", "Key": "gifs-test/1.png" },
-      { "Bucket": "aeris-osn-2017", "Key": "gifs-test/2.png" },
-      { "Bucket": "aeris-osn-2017", "Key": "gifs-test/3.png" },
-      { "Bucket": "aeris-osn-2017", "Key": "gifs-test/4.png" },
-      { "Bucket": "aeris-osn-2017", "Key": "gifs-test/5.png" }
-    ],
-    "validTime": "2017-05-24T20:57:55.885Z"
-  }
+  "imageId": "temps",
+  "locations": [
+    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/1.png" },
+    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/2.png" },
+    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/3.png" },
+    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/4.png" },
+    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/5.png" }
+  ],
+  "validTime": "2017-05-24T20:57:55.885Z"
 }
