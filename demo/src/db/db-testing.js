@@ -1,4 +1,4 @@
-const RedisDataFlow = require("./redis");
+const RedisDataFlow = require("./RedisDataFlow");
 
 const messages = [
 	{

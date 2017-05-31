@@ -18,6 +18,7 @@ const s3 = new S3();
  * }
  */
 exports.handler = async function (event, context, callback) {
+	ctx.callbackWaitsForEmptyEventLoop = false;
 	try {
 		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
 
