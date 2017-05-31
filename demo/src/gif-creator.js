@@ -14,7 +14,9 @@ const s3 = new S3();
  * {
  * 	 imageId: string;
  * 	 locations: { Bucket: string; Key: string; }[];
- * 	 validTime: Date;  // ISO string
+ * 	 validTime: number;  // UNIX timestamp
+ * 	 gifDelay: number;	 // delay between frames in ms
+ * 	 gifLoop: Boolean;
  * }
  */
 exports.handler = async function (message, context, callback) {
@@ -35,7 +37,18 @@ exports.handler = async function (message, context, callback) {
 		);
 
 		// Create a GIF from the images
-		execSync(`convert -delay 20 -loop 0 ${imgPaths.join(' ')} /tmp/animated.gif`);
+		// using ImageMagick
+		execSync([
+			'convert',
+			// Delay between animation frames (in centiseconds)
+			`-delay ${message.gifDelay / 10}`,
+			// How often to loop the animation ("0" === "infinite")
+			`-loop ${message.gifLoop ? '0' : '1'}`,
+			// Source images
+			imgPaths.join(' '),
+			// Destination GIF
+			'/tmp/animated.gif'
+		].join(''));
 
 		// Save back to S3
 		const uploadLocation = {
