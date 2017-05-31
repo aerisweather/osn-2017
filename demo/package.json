@@ -7,7 +7,6 @@
     "aws-sdk": "^2.49.0",
     "flat": "^2.0.1",
     "ioredis": "^3.0.0",
-    "moment": "^2.18.1",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "sharp": "^0.17.3",
@@ -19,8 +18,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel ./src -d --out-dir build --ignore node_modules",
-    "deploy": "rm -rf ./build; npm run build && node ./deployment/provision.js"
+    "build": "rm -rf ./build; babel ./src -d --out-dir build --ignore node_modules",
+    "deploy": "npm run build && node ./deployment/provision.js",
+    "deploy-code": "npm run build && node ./deployment/deploy-code.js"
   },
   "repository": {
     "type": "git",
