@@ -63,7 +63,7 @@ exports.handler = async function (message, context, callback) {
 			location: uploadLocation
 		}];
 		lambda.invoke({
-			FunctionName: 'osn2017-mediator',
+			FunctionName: process.env.MEDIATOR_ARN,
 			InvocationType: 'Event',
 			Payload: JSON.stringify(outMessages)
 		}).promise();

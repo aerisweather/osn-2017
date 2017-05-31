@@ -62,7 +62,7 @@ exports.handler = async function (message, context, callback) {
 		// Send a message to the mediator,
 		// to let it know we're done
 		await lambda.invoke({
-			FunctionName: 'osn2017-mediator',
+			FunctionName: process.env.MEDIATOR_ARN,
 			InvocationType: 'Event',
 			Payload: JSON.stringify(outMessages)
 		}).promise();
