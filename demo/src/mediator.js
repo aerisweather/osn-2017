@@ -1,12 +1,11 @@
 const AWS = new require('aws-sdk');
-const RedisDataFlow = new require('./db/RedisDataFlow')();
+const RedisDataFlow = new require('./db/RedisDataFlow');
 
 const db = new RedisDataFlow({
 	host: process.env.REDIS_HOSTNAME,
 	port: process.env.REDIS_PORT
 });
 const lambda = new AWS.Lambda();
-const ses = new AWS.SES();
 
 exports.handler = async (message, context, callback) => {
 	try {
@@ -14,21 +13,29 @@ exports.handler = async (message, context, callback) => {
 		console.log(`Received event: ${JSON.stringify(message, null, 2)}`);
 
 		// Save the incoming message to the DB
+		console.log('save inMsg...');
 		db.save(message);
+		console.log('save inMsg... done.');
 
 		// The Controller will figure out what to do with the
 		// incoming message, and return outgoing messages
+		console.log('controller...');
 		const outMessages = await Controller(message);
+		console.log('controller... done.');
 
 		// Save the outgoing messages to the DB
+		console.log('save outMsgs...');
 		await Promise.all(
 			outMessages.map(
 				msg => db.save(msg)
 			)
 		);
+		console.log('save outMsgs... done');
 
 		// Send all outgoing messages to their
 		// corresponding lambda functions
+		console.log('send outMsgs...');
+		console.log(JSON.stringify(outMessages, null, 2));
 		await Promise.all(
 			outMessages.map(
 				msg => lambda.invoke({
@@ -38,6 +45,7 @@ exports.handler = async (message, context, callback) => {
 				}).promise()
 			)
 		);
+		console.log('send outMsgs... done');
 
 		console.log(`Completed with: ${JSON.stringify(outMessages, null, 2)}`);
 	}
@@ -62,8 +70,8 @@ const config = {
 		loop: true
 	},
 	email: {
-		bodyTemplate: (ctx) => ``,
-		subjectTemplate: ctx => ``,
+		bodyTemplate: (ctx) => `<pre>${JSON.stringify(ctx, null, 2)}</pre>`,
+		subjectTemplate: ctx => `Hello from OSN 2017!`,
 		to: ['eschwartz@aerisweather.com'],
 		from: ['eschwartz@aerisweather.com']
 	}
@@ -83,12 +91,13 @@ async function Controller(message) {
 			outMessages.push({
 				type: 'please-create-thumbnail',
 				dateCreated: Date.now(),
-				target: process.env.AMP_IMAGE_FETCHER_ARN,
+				target: 'osn2017-thumbnail-creator',
 				// Payload
 				imageId: message.imageId,
 				validTime: message.validTime,
 				width: config.thumbnail.width,
 				height: config.thumbnail.height,
+				location: message.location
 			});
 
 			// Create a GIF for every 5 valid times
@@ -98,11 +107,13 @@ async function Controller(message) {
 
 			// First, find the last GIF we created
 			// for this imageId
+			console.log('findLatestValidTime...');
 			const lastCreatedGif = await db
-				.findLatest({
+				.findLatestValidTime({
 					type: 'please-create-gif',
 					imageId: message.imageId,
 				});
+			console.log('findLatestValidTime... done.');
 
 			// Next, find all images since the GIF
 			const imagesSinceLastGif = await db
@@ -118,7 +129,7 @@ async function Controller(message) {
 				outMessages.push({
 					type: 'please-create-gif',
 					dateCreated: Date.now(),
-					target: process.env.GIF_CREATOR_ARN,
+					target: 'osn2017-gif-creator',
 					// Payload
 					imageId: message.imageId,
 					validTime: Math.max(...imagesSinceLastGif.map(msg => msg.validTime)),
@@ -152,7 +163,7 @@ async function Controller(message) {
 			const gifImageUrl =
 				`https://s3.amazonaws.com/${message.location.Bucket}/${message.location.Key}`;
 
-			// Use our configured template to generate the email body/subjcet
+			// Use our configured templates to generate the email body/subjcet
 			const templateContext = {
 				imageId: message.imageId,
 				validTime: message.validTime,
@@ -165,7 +176,7 @@ async function Controller(message) {
 			outMessages.push({
 				type: 'please-send-email',
 				dateCreated: Date.now(),
-				target: process.env.EMAIL_SENDER,
+				target: 'osn2017-email-sender',
 				// Payload
 				to: config.email.to,
 				from: config.email.from,
@@ -176,8 +187,4 @@ async function Controller(message) {
 	}
 
 	return outMessages;
-}
-
-function locationToUrl({ Bucket, Key }) {
-	return `https://s3.amazonaws.com/${Bucket}/${Key}`;
 }
