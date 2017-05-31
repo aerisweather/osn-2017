@@ -50,6 +50,7 @@ exports.handler = async (event, context, callback) => {
 		// to let it know we're done
 		const outMessages = [{
 			type: 'did-fetch-image',
+			dateCreated: Date.now(),
 			imageId: event.imageId,
 			validTime: event.validTime,
 			location: uploadLocation
