@@ -1,17 +1,18 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:300i,400,700|Open+Sans|Ubuntu+Mono:400,700,400italic');
+@import url('https://fonts.googleapis.com/css?family=Lato:300i,400,700|Source+Sans+Pro|Open+Sans|Ubuntu+Mono:400,700,400italic');
 
-body {
-	font-family: 'Open Sans';
+.remark-slide-content {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 1.4em;
 }
 
 h1, h2, h3 {
-	font-family: 'Lato Thin';
-	font-weight: normal;
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
 }
 
 .remark-slide-content h2 {
 	font-family: 'Open Sans';
-	font-size: 2em;
+	font-size: 1.8em;
 	font-style: italic;
 }
 
