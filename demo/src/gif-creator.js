@@ -68,21 +68,21 @@ exports.handler = async function (message, context, callback) {
 
 		// Send a message to the mediator,
 		// to let it know we're done
-		const outMessages = [{
+		const outMessage = {
 			type: 'did-create-gif',
 			dateCreated: Date.now(),
 			imageId: message.imageId,
 			validTime: message.validTime,
 			location: uploadLocation
-		}];
+		};
 		lambda.invoke({
 			FunctionName: process.env.MEDIATOR_ARN,
 			InvocationType: 'Event',
-			Payload: JSON.stringify(outMessages)
+			Payload: JSON.stringify(outMessage)
 		}).promise();
-		console.log(`Completed with: ${JSON.stringify(outMessages, null, 2)}`);
+		console.log(`Completed with: ${JSON.stringify(outMessage, null, 2)}`);
 
-		callback(null, outMessages);
+		callback(null, outMessage);
 	}
 	catch (error) {
 		callback(error)
