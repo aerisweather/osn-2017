@@ -78,7 +78,7 @@ messages.reduce((savePromise, message) => {
 		return client.findSince({
 			type:    'did-create-thumbnail',
 			imageId: 'radar-mn'
-		}, 1500)
+		}, 600)
 	})
 	.then(result => {
 		console.log(JSON.stringify(result, null, 2));
