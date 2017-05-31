@@ -24,7 +24,8 @@ const fs = require('fs');
 		'osn2017-amp-image-fetcher',
 		'osn2017-gif-creator',
 		'osn2017-thumbnail-creator',
-		'osn2017-mediator'
+		'osn2017-mediator',
+		'osn2017-email-sender'
 	];
 	return Promise.all(
 		lambdaFunctions.map(fName =>
