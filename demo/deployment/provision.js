@@ -201,6 +201,27 @@ const cfTemplate = {
 				}
 			}
 		},
+		LambdaEmailSender:     {
+			Type:       'AWS::Lambda::Function',
+			Properties: {
+				FunctionName: 'osn2017-email-sender',
+				Description:  'Send emails',
+				Runtime: 'nodejs6.10',
+				Code: {
+					S3Bucket: s3ArchiveLocation.Bucket,
+					S3Key: s3ArchiveLocation.Key
+				},
+				MemorySize:   128,
+				Timeout:      3,
+				Handler:      'build/email-sender.handler',
+				Role:         { 'Fn::GetAtt': [ "LambdaIamRole", "Arn" ]},
+				Environment:  {
+					Variables: {
+						MEDIATOR_ARN: { 'Fn::GetAtt': [ "LambdaMediator", "Arn" ]}
+					}
+				}
+			}
+		},
 	}
 };
 

@@ -1,0 +1,8 @@
+{
+  "type": "please-send-email",
+  "dateCreated": 1496256006,
+  "to": ["eschwartz@aerisweather.com"],
+  "from": "eschwartz@aerisweather.com",
+  "body": "<b>Hello world</b>",
+  "subject": "Yo."
+}
