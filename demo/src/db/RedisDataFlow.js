@@ -35,6 +35,23 @@ class RedisDataFlow {
 		return pipeline.exec();
 	}
 
+	async findLatestValidTime({type, imageId}) {
+		// Find the message id for the latest validTime
+		const [messageId] = await this.redisClient
+			.zrevrangebyscore(getSortId({type, imageId}), '+inf', '-inf', 'LIMIT', '0', '1');
+
+		if (!messageId) { return undefined; }
+
+		// Lookup the message by messageId
+		const message = await this.redisClient.hgetall(messageId);
+
+		return message;
+
+		// Bonus! We can use the "stored procedure" we defined earlier, and get all the data at once:
+		/*return this.redisClient.findLatest(getSortId({type, imageId}))
+		 .then(transformArrayToObj)*/
+	}
+
 	async findByValidTime({type, imageId, minValidTime, maxValidTime, limit = 99}) {
 		// Find the ids for all messages
 		// since minValidTime
