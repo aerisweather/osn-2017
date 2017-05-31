@@ -17,36 +17,53 @@ class RedisDataFlow {
 		})*/
 	}
 
-	save(message) {
+	async save(message) {
 		const pipeline = this.redisClient.pipeline();
 
-		// Save main message hash map
+		// Save the message to a hash map
+		// keyed by message id (type + validTime)
 		pipeline.hmset(getMessageId(message), message);
 
-		// Add to our index of type:imageId sorted by dateCreated, we need to search by this later.
+		// Save the message to a sorted set
+		// Keyed by sortId (type + imageId)
+		// and sorted by validTime
+		// This will allow us to search by validTime, later
 		pipeline.zadd(getSortId(message), message.validTime, getMessageId(message));
 
 		return pipeline.exec();
 	}
 
-	findLatest({type, imageId}) {
-		return this.redisClient
-			.zrevrangebyscore(getSortId({type, imageId}), '+inf', '-inf', 'LIMIT', '0', '1')
-			.then(key => this.redisClient.hgetall(key));
+	async findLatest({type, imageId}) {
+		// Find the message id for the latest validTime
+		const [messageId] = await this.redisClient
+			.zrevrangebyscore(getSortId({type, imageId}), '+inf', '-inf', 'LIMIT', '0', '1');
+
+		if (!messageId) { return undefined; }
+
+		// Lookup the message by messageId
+		const message = await this.redisClient.hgetall(messageId);
+
+		return message;
 
 		// Bonus! We can use the "stored procedure" we defined earlier, and get all the data at once:
 		/*return this.redisClient.findLatest(getSortId({type, imageId}))
 		 	.then(transformArrayToObj)*/
 	}
 
-	findSince({type, imageId}, sinceTime, limit = 99) {
-		return this.redisClient
-			.zrevrangebyscore(getSortId({type, imageId}), '+inf', sinceTime, 'LIMIT', '0', limit)
-			.then(messageIds => {
-				return Promise.all(
-					messageIds.map(messageId => this.redisClient.hgetall(messageId))
-				)
-			});
+	async findSince({type, imageId}, minValidTime, limit = 99) {
+		// Find the ids for all messages
+		// since minValidTime
+		const messageIds = await this.redisClient
+			.zrevrangebyscore(getSortId({type, imageId}), '+inf', minValidTime, 'LIMIT', '0', limit);
+
+		// Lookup the messages, by id
+		const messages = await Promise.all(
+			messageIds.map(
+				msgId => this.redisClient.hgetall(msgId)
+			)
+		);
+
+		return messages;
 	}
 }
 
