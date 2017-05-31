@@ -4,7 +4,7 @@ const execSync = require('child_process').execSync;
 const fs = require('fs');
 
 (() => {
-	AWS.config.loadFromPath(`${__dirname}/deploy-credentials.ignore.json`);
+	AWS.config.loadFromPath(`${__dirname}/../deploy-credentials.ignore.json`);
 
 	// Create a zip archive of the code
 	console.log('Archiving code...');
