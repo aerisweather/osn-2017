@@ -1,9 +1,12 @@
-const RedisDataFlow = require("./RedisDataFlow");
+const DynamoDbDataFlow = require("./DynamoDbDataFlow");
 
 
 (async () => {
-	const client = new RedisDataFlow();
+	const client = new DynamoDbDataFlow();
 
+	await new Promise((resolve, reject) => {
+		setTimeout(resolve, 3000);
+	});
 	// Create a bunch of messages
 	const messages = [
 		{

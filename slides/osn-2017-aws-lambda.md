@@ -191,6 +191,7 @@ Receives "please" message from mediator:
 ```json
 {
   "type": "please-fetch-amp-image",
+  "dateCreated": 123456789,
   "imageId": "temps",
   "layers": [
     "flat-dk",
@@ -205,6 +206,27 @@ Receives "please" message from mediator:
 ```
 
 ---
+
+class: slide-primary
+# Fetcher
+## Get an image via URL, save image to S3
+
+Will send a "did" message to mediator:
+```json
+{
+  "type": "did-fetch-amp-image",
+  "dateCreated": 123456789,
+  "imageId": "temps",
+  "validTime": 4567891011,
+  "location": {
+    "Bucket": "osn2017-aeris-abcd",
+    "Key": "amp-image-fetcher/[bunch of stuff].png"
+  }
+}
+```
+
+---
+
 @ todo:
 Security:
 1. Mediator in a VPC, others outside
@@ -214,9 +236,11 @@ Security:
 	1. Encrypt at rest.
 State in a stateless environment - concurrent everything, offload that to db
  * Eventual concurrency here is bad. Lots can happen "at once"
-Emphasize CI
+
 Where else will you hit a scaling issue? Once you "leave lambda"
  * For us it was after our import was done
+
+Connecting to AWS resources is a PITA if inside a VPC
 
 ---
 
