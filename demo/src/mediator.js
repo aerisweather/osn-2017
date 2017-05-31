@@ -87,8 +87,8 @@ async function Controller(message) {
 				// Payload
 				imageId: message.imageId,
 				validTime: message.validTime,
-				width: config.thumbnailWidth,
-				height: config.thumbnailHeight,
+				width: config.thumbnail.width,
+				height: config.thumbnail.height,
 			});
 
 			// Create a GIF for every 5 valid times
@@ -114,7 +114,7 @@ async function Controller(message) {
 
 			// If we have 5 images since our last GIF,
 			// then we're ready to create a new GIF
-			if (imagesSinceLastGif.length >= config.gifFrames) {
+			if (imagesSinceLastGif.length >= config.gif.frames) {
 				outMessages.push({
 					type: 'please-create-gif',
 					dateCreated: Date.now(),
@@ -123,8 +123,8 @@ async function Controller(message) {
 					imageId: message.imageId,
 					validTime: Math.max(...imagesSinceLastGif.map(msg => msg.validTime)),
 					location: imagesSinceLastGif.map(msg => msg.location),
-					gifDelay: config.gifDelay,
-					gifLoop: config.gifLoop
+					gifDelay: config.gif.delay,
+					gifLoop: config.gif.loop
 				});
 			}
 
