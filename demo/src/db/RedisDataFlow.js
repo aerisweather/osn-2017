@@ -51,7 +51,7 @@ class RedisDataFlow {
 }
 
 function getMessageId(message) {
-	return `${message.type}:${message.validTime}`;
+	return `${message.type}:${message.dateCreated}`;
 }
 
 function transformArrayToObj(arrResponse) {
