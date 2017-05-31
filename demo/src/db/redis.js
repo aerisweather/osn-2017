@@ -19,15 +19,19 @@ class RedisDataFlow {
 
 	save(message) {
 		const pipeline = this.redisClient.pipeline();
+
 		// Save main message hash map
 		pipeline.hmset(getMessageId(message), message);
+
 		// Add to our index of type:imageId sorted by dateCreated, we need to search by this later.
 		pipeline.zadd(`${message.type}:${message.imageId}`, message.validTime, getMessageId(message));
+
 		return pipeline.exec();
 	}
 
 	findLatest({type, imageId}) {
-		return this.redisClient.zrevrangebyscore(`${type}:${imageId}`, '+inf', '-inf', 'LIMIT', '0', '1')
+		return this.redisClient
+			.zrevrangebyscore(`${type}:${imageId}`, '+inf', '-inf', 'LIMIT', '0', '1')
 			.then(key => this.redisClient.hgetall(key));
 
 		// Bonus! We can use the "stored procedure" we defined earlier, and get all the data at once:
@@ -36,7 +40,8 @@ class RedisDataFlow {
 	}
 
 	findSince({type, imageId}, sinceTime, limit = 99) {
-		return this.redisClient.zrevrangebyscore(`${type}:${imageId}`, '+inf', sinceTime, 'LIMIT', '0', limit)
+		return this.redisClient
+			.zrevrangebyscore(`${type}:${imageId}`, '+inf', sinceTime, 'LIMIT', '0', limit)
 			.then(resultKeys => {
 				return Promise.all(
 					resultKeys.map(key => this.redisClient.hgetall(key))
