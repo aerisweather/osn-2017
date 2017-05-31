@@ -35,10 +35,7 @@ class RedisDataFlow {
 		 	.then(transformArrayToObj)*/
 	}
 
-	findSince({type, imageId}, sinceTime, limit) {
-		if(limit === undefined) {
-			limit = '99'
-		}
+	findSince({type, imageId}, sinceTime, limit = 99) {
 		return this.redisClient.zrevrangebyscore(`${type}:${imageId}`, '+inf', sinceTime, 'LIMIT', '0', limit)
 			.then(resultKeys => {
 				return Promise.all(
