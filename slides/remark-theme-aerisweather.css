@@ -119,6 +119,9 @@ h1 .inline-icon img {
 	height: 600px;
 }
 
+.large-content p, .large-content li, .large-content span {
+	font-size: 1.5em;
+}
 .remark-container {
 	background-color: rgb(6, 15, 23);
 }

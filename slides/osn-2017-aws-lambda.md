@@ -101,25 +101,9 @@ class: left, middle, slide-title-alt
 ## Coordinating microservices (like Lambda)
 
 ---
-name:data-flow-pattern
-class: slide-secondary
-# Data Flow Pattern
-## A smart way to organize microservices
-
-1. Based on Simple Workflow Service
-	1. SWS didn't really seem "Simple"
-	1. Verbose config for each thing
-	1. Forking workflows difficult
-1. Why Data Flow?
-	1. Need more advanced Workflows
-	1. Microservice coordination
-	1. Avoid sequential spaghetti with a common interface
-
-???
-More than a bunch of random functions calling each other
----
 class: slide-secondary
 # Data Flow Architecture
+## What is it?
 
 1. Smart Mediator - The Brains .img-float-right[.size-height-150px[![Mediator](./images/diagrams/mediator.svg)]]
 	1. Config lives
@@ -137,6 +121,25 @@ count: false
 .summary[A smart mediator leads dumb workers, update independently]
 	
 ---
+name:data-flow-pattern
+class: slide-secondary
+# Data Flow Pattern
+## A smart way to organize microservices
+
+1. Based on Simple Workflow Service
+	1. SWS didn't really seem "Simple"
+	1. Verbose config for each thing
+	1. Forking workflows difficult
+--
+
+1. Why Data Flow?
+	1. Need more advanced Workflows
+	1. Microservice coordination
+	1. Avoid sequential spaghetti with a common interface
+
+???
+More than a bunch of random functions calling each other
+---
 class: left, middle, slide-title-alt
 # Demo .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
 ## AWS Lambda - Creating Weather GIFs
@@ -145,16 +148,61 @@ class: left, middle, slide-title-alt
 class: slide-secondary
 # Demo - Design
 
-## We want a gif and thumbnails
+## Problem: Need a weather gif and thumbnails
 1. Download each frame image 
 1. For each image create a thumbnail
 1. Once we have all frames, create weather gif
 
+.summary[Simple example, but scales really well!]
+
 ---
 class: slide-secondary
-# Demo - Design
+# Demo - Desisgn
 
 .center[.size-height-600px[![Data Flow Icon](./images/diagrams/demo-full.svg)]]
+
+---
+class: slide-secondary large-content
+# Demo - Resources needed
+
+* **Redis Cluster** - For saving data (our main DB)
+* **S3** - Worker storage
+* **3 Workers** - Fetching, Thumbnail Creation, Gif Creation
+* **1 Mediator** - To coordinate it all
+
+---
+class: slide-secondary
+# Coordinating Resources
+
+Lots of little pieces (microservice architecture) can be a management nightmare!
+
+1. Cloud Formation Templates
+	1. All the resources for one piece in one spot, IAM roles, Bucket policies, etc.
+	1. Reproducible, makes progressing through environments east development -> staging -> production
+1. CI Pipeline
+	1. Plug in your CI pipeline to AWS to publish new versions of your code
+	1. Small/simple workers make individual updates less scary and can be done more frequently - Branches are code debt!
+---
+class: slide-primary
+# Fetcher
+## Get an image via URL, save image to S3
+
+Receives "please" message from mediator:
+```json
+{
+  "type": "please-fetch-amp-image",
+  "imageId": "temps",
+  "layers": [
+    "flat-dk",
+    "temperatures"
+  ],
+  "width": 800,
+  "height": 600,
+  "center": "tulsa,ok",
+  "zoom": 4,
+  "validTime": "2017-05-24T20:57:55.885Z"
+}
+```
 
 ---
 @ todo:
