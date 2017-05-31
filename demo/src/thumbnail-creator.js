@@ -52,7 +52,6 @@ exports.handler = async function (event, context, callback) {
 
 		const outMessages = [{
 			type: 'did-create-thumbnail',
-			dateCreated: Date.now(),
 			imageId: event.imageId,
 			validTime: event.validTime,
 			location: uploadLocation

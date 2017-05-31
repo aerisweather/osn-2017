@@ -22,7 +22,7 @@ class RedisDataFlow {
 		// Save main message hash map
 		pipeline.hmset(getMessageId(message), message);
 		// Add to our index of type:imageId sorted by dateCreated, we need to search by this later.
-		pipeline.zadd(`${message.type}:${message.imageId}`, message.dateCreated, getMessageId(message));
+		pipeline.zadd(`${message.type}:${message.imageId}`, message.validTime, getMessageId(message));
 		return pipeline.exec();
 	}
 
@@ -49,7 +49,7 @@ class RedisDataFlow {
 }
 
 function getMessageId(message) {
-	return `${message.type}:${message.dateCreated}`;
+	return `${message.type}:${message.validTime}`;
 }
 
 function transformArrayToObj(arrResponse) {

@@ -3,7 +3,6 @@ const RedisDataFlow = require("./redis");
 const messages = [
 	{
 		type:        'please-create-thumbnail',
-		dateCreated: new Date(1000).getTime(),
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'radar-mn',
@@ -14,7 +13,6 @@ const messages = [
 	},
 	{
 		type:        'please-create-thumbnail',
-		dateCreated: new Date(1005).getTime(),
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'satellite-ca',
@@ -25,7 +23,6 @@ const messages = [
 	},
 	{
 		type:        'did-create-thumbnail',
-		dateCreated: new Date(1500).getTime(),
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'radar-mn',
@@ -36,7 +33,6 @@ const messages = [
 	},
 	{
 		type:        'did-create-thumbnail',
-		dateCreated: new Date(1505).getTime(),
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'satellite-ca',
@@ -47,7 +43,6 @@ const messages = [
 	},
 	{
 		type:        'did-create-thumbnail',
-		dateCreated: new Date(2500).getTime(),
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'radar-mn',
@@ -58,7 +53,6 @@ const messages = [
 	},
 	{
 		type:        'did-create-thumbnail',
-		dateCreated: new Date(3500).getTime(),
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'radar-mn',
@@ -78,7 +72,7 @@ messages.reduce((savePromise, message) => {
 		return client.findSince({
 			type:    'did-create-thumbnail',
 			imageId: 'radar-mn'
-		}, 1500)
+		}, 600)
 	})
 	.then(result => {
 		console.log(JSON.stringify(result, null, 2));

@@ -56,7 +56,6 @@ exports.handler = async function (event, context, callback) {
 		// to let it know we're done
 		const outMessages = [{
 			type: 'did-create-gif',
-			dateCreated: Date.now(),
 			imageId: event.imageId,
 			validTime: event.validTime,
 			location: uploadLocation
