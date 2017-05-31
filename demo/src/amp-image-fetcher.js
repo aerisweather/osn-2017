@@ -1,4 +1,3 @@
-const moment = require('moment');
 const request = require('request-promise');
 const AWS = require('aws-sdk');
 
@@ -14,7 +13,7 @@ const lambda = new AWS.Lambda();
  * 	 height: number;
  * 	 center: string;
  * 	 zoom: number;
- *	 validTime: Date; // ISO format
+ *	 validTime: string; // Any valid time accepted by AMP
  * }
  */
 exports.handler = async (message, context, callback) => {
@@ -28,14 +27,16 @@ exports.handler = async (message, context, callback) => {
 			`/${message.layers.join(',')}`,
 			`/${message.width}x${message.height}`,
 			`/${message.center},${message.zoom}`,
-			`/${moment(message.validTime).format('YYYYMMDDHHmmss')}`,
+			`/${message.validTime}`,
 			`.png`
 		].join('');
 
 		// Download the image from AMP
-		const image = await request(`http://maps.aerisapi.com/${endpoint}`, {
-			encoding: null
+		const res = await request(`http://maps.aerisapi.com/${endpoint}`, {
+			encoding: null,
+			resolveWithFullResponse: true
 		});
+		const image = res.body;
 
 		// And upload the image back up to S3
 		const uploadLocation = {
@@ -54,7 +55,8 @@ exports.handler = async (message, context, callback) => {
 			type: 'did-fetch-image',
 			dateCreated: Date.now(),
 			imageId: message.imageId,
-			validTime: message.validTime,
+			// Grab the valid time from the response headers
+			validTime: new Date(res.headers['x-aeris-valid-date']).getTime() / 1000,
 			location: uploadLocation
 		}];
 		await lambda.invoke({
