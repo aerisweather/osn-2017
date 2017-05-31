@@ -52,7 +52,7 @@ exports.handler = async function (message, context, callback) {
 
 		// Save back to S3
 		const uploadLocation = {
-			Bucket: 'aeris-osn-2017',
+			Bucket: process.env.S3_BUCKET,
 			Key: [
 				`gif-creator`,
 				`/${message.imageId}`,

@@ -39,7 +39,7 @@ exports.handler = async (message, context, callback) => {
 
 		// And upload the image back up to S3
 		const uploadLocation = {
-			Bucket: 'aeris-osn-2017',
+			Bucket: process.env.S3_BUCKET,
 			Key: `amp-image-fetcher${endpoint}`
 		};
 		await s3.upload({
