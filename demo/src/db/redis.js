@@ -6,7 +6,7 @@ class RedisDataFlow {
 		// Redis setup
 		this.redisClient = new Redis(opts);
 		this.redisClient.on("error", function (err) {
-			console.log("Error " + err);
+			console.error("Redis error " + err);
 		});
 
 		// Bonus! We can define "stored procedures" (lua scripts) on the server to get things all at once
