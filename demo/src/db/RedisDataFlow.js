@@ -28,7 +28,9 @@ class RedisDataFlow {
 		// Keyed by sortId (type + imageId)
 		// and sorted by validTime
 		// This will allow us to search by validTime, later
-		pipeline.zadd(getSortId(message), message.validTime, getMessageId(message));
+		if (Number.isInteger(message.validTime)) {
+			pipeline.zadd(getSortId(message), message.validTime, getMessageId(message));
+		}
 
 		return pipeline.exec();
 	}
