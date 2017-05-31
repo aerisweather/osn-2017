@@ -18,14 +18,14 @@ const s3 = new S3();
  * 	 validTime: Date 		// ISO string
  * }
  */
-exports.handler = async function (event, context, callback) {
-	ctx.callbackWaitsForEmptyEventLoop = false;
+exports.handler = async function (message, context, callback) {
 	try {
-		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
+		context.callbackWaitsForEmptyEventLoop = false;
+		console.log(`Received event: ${JSON.stringify(message, null, 2)}`);
 
 		// Download from S3
-		const srcImageLocation = event.location;
-		const s3ReadStream = s3.getObject(event.location)
+		const srcImageLocation = message.location;
+		const s3ReadStream = s3.getObject(message.location)
 			.createReadStream()
 			.on('error', callback);
 
@@ -38,9 +38,9 @@ exports.handler = async function (event, context, callback) {
 			Bucket: 'aeris-osn-2017',
 			Key: [
 				`thumbnail-creator`,
-				`/${event.imageId}`,
-				`/${event.width}x${event.height}`,
-				`/${event.validTime}`,
+				`/${message.imageId}`,
+				`/${message.width}x${message.height}`,
+				`/${message.validTime}`,
 				`/${uuid()}`,
 				path.basename(srcImageLocation.Key)
 			].join('')
@@ -54,8 +54,8 @@ exports.handler = async function (event, context, callback) {
 		const outMessages = [{
 			type: 'did-create-thumbnail',
 			dateCreated: Date.now(),
-			imageId: event.imageId,
-			validTime: event.validTime,
+			imageId: message.imageId,
+			validTime: message.validTime,
 			location: uploadLocation
 		}];
 

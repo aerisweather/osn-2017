@@ -17,14 +17,14 @@ const s3 = new S3();
  * 	 validTime: Date;  // ISO string
  * }
  */
-exports.handler = async function (event, context, callback) {
-	ctx.callbackWaitsForEmptyEventLoop = false;
+exports.handler = async function (message, context, callback) {
 	try {
-		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
+		context.callbackWaitsForEmptyEventLoop = false;
+		console.log(`Received event: ${JSON.stringify(message, null, 2)}`);
 
 		// Download all images to /tmp/[i].png
 		const imgPaths = await Promise.all(
-			event.locations.map(
+			message.locations.map(
 				(s3Loc, i) => new Promise((onRes) => {
 					s3.getObject(s3Loc)
 						.createReadStream()
@@ -42,8 +42,8 @@ exports.handler = async function (event, context, callback) {
 			Bucket: 'aeris-osn-2017',
 			Key: [
 				`gif-creator`,
-				`/${event.imageId}`,
-        `/${event.validTime}`,
+				`/${message.imageId}`,
+        `/${message.validTime}`,
 				`/${uuid()}.gif`
 			].join('')
 		};
@@ -58,8 +58,8 @@ exports.handler = async function (event, context, callback) {
 		const outMessages = [{
 			type: 'did-create-gif',
 			dateCreated: Date.now(),
-			imageId: event.imageId,
-			validTime: event.validTime,
+			imageId: message.imageId,
+			validTime: message.validTime,
 			location: uploadLocation
 		}];
 		lambda.invoke({

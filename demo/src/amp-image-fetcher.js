@@ -17,17 +17,18 @@ const lambda = new AWS.Lambda();
  *	 validTime: Date; // ISO format
  * }
  */
-exports.handler = async (event, context, callback) => {
-	ctx.callbackWaitsForEmptyEventLoop = false;
+exports.handler = async (message, context, callback) => {
 	try {
-		console.log(`Received event: ${JSON.stringify(event, null, 2)}`);
+		context.callbackWaitsForEmptyEventLoop = false;
+		console.log(`Received event: ${JSON.stringify(message, null, 2)}`);
+
 		// Figure out AMP endpoint, from event payload
 		const endpoint = [
 			`/${process.env.CLIENT_ID}_${process.env.CLIENT_SECRET}`,
-			`/${event.layers.join(',')}`,
-			`/${event.width}x${event.height}`,
-			`/${event.center},${event.zoom}`,
-			`/${moment(event.validTime).format('YYYYMMDDHHmmss')}`,
+			`/${message.layers.join(',')}`,
+			`/${message.width}x${message.height}`,
+			`/${message.center},${message.zoom}`,
+			`/${moment(message.validTime).format('YYYYMMDDHHmmss')}`,
 			`.png`
 		].join('');
 
@@ -52,8 +53,8 @@ exports.handler = async (event, context, callback) => {
 		const outMessages = [{
 			type: 'did-fetch-image',
 			dateCreated: Date.now(),
-			imageId: event.imageId,
-			validTime: event.validTime,
+			imageId: message.imageId,
+			validTime: message.validTime,
 			location: uploadLocation
 		}];
 		await lambda.invoke({
