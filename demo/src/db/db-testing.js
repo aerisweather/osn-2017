@@ -7,7 +7,7 @@ const messages = [
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'radar-mn',
-		validTime:   new Date('2017-05-25T06:00:00Z'),
+		validTime:   new Date(600).getTime(),
 		width:       100,
 		height:      100,
 		location:    's3://aeris-osn2017/image-ingestor/radar-mn/6'
@@ -18,7 +18,7 @@ const messages = [
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'satellite-ca',
-		validTime:   new Date('2017-05-25T06:00:00Z'),
+		validTime:   new Date(600).getTime(),
 		width:       100,
 		height:      100,
 		location:    's3://aeris-osn2017/image-ingestor/satellite-ca/6'
@@ -29,7 +29,7 @@ const messages = [
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'radar-mn',
-		validTime:   new Date('2017-05-25T06:00:00Z'),
+		validTime:   new Date(600).getTime(),
 		width:       100,
 		height:      100,
 		location:    's3://aeris-osn2017/thumbnail-creator/radar-mn/6'
@@ -40,7 +40,7 @@ const messages = [
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'satellite-ca',
-		validTime:   new Date('2017-05-25T06:00:00Z'),
+		validTime:   new Date(600).getTime(),
 		width:       100,
 		height:      100,
 		location:    's3://aeris-osn2017/thumbnail-creator/satellite-ca/6'
@@ -51,7 +51,7 @@ const messages = [
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'radar-mn',
-		validTime:   new Date('2017-05-25T07:00:00Z'),
+		validTime:   new Date(700).getTime(),
 		width:       100,
 		height:      100,
 		location:    's3://aeris-osn2017/thumbnail-creator/radar-mn/7'
@@ -62,7 +62,7 @@ const messages = [
 		target:      'thumbnail-creator',
 		// Payload
 		imageId:     'radar-mn',
-		validTime:   new Date('2017-05-25T08:00:00Z'),
+		validTime:   new Date(800).getTime(),
 		width:       100,
 		height:      100,
 		location:    's3://aeris-osn2017/thumbnail-creator/radar-mn/8'
