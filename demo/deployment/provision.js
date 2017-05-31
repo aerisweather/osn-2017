@@ -208,8 +208,8 @@ const cfTemplate = {
 				Description:  'Send emails',
 				Runtime: 'nodejs6.10',
 				Code: {
-					S3Bucket: s3ArchiveLocation.Bucket,
-					S3Key: s3ArchiveLocation.Key
+					S3Bucket: { 'Ref': 'S3' },
+					S3Key: archiveKey
 				},
 				MemorySize:   128,
 				Timeout:      3,
