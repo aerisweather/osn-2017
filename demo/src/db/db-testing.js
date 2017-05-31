@@ -79,10 +79,11 @@ const RedisDataFlow = require("./RedisDataFlow");
 	await messages.map(msg => client.save(msg));
 
 	// Look for a message
-	const results = await client.findLatest({
+	const results = await client.findByValidTime({
 		type:    'did-create-thumbnail',
-		imageId: 'radar-mn'
-	}, 600);
+		imageId: 'radar-mn',
+		minValidTime: 600
+	});
 
 	// Log the msg
 	console.log(JSON.stringify(results, null, 2));
