@@ -41,7 +41,7 @@ exports.handler = async (message, context, callback) => {
 		// And upload the image back up to S3
 		const uploadLocation = {
 			Bucket: process.env.S3_BUCKET,
-			Key: `amp-image-fetcher${endpoint}`
+			Key: `amp-image-fetcher${res.req.path}`
 		};
 		await s3.upload({
 			Bucket: uploadLocation.Bucket,
