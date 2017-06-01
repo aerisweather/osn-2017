@@ -3,8 +3,10 @@ const AWS = require('aws-sdk');
 class DynamoDbDataFlow {
 
 	constructor(opts) {
-		this.tableName = opts.TableName;
-		this.docClient = new AWS.DynamoDB.DocumentClient(opts);
+		this.tableName = opts.tableName;
+		this.docClient = new AWS.DynamoDB.DocumentClient(Object.assign(opts, {
+			TableName: opts.tableName
+		}));
 	}
 
 	async save(message) {
