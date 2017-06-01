@@ -108,18 +108,21 @@ class: slide-secondary
 # Data Flow Architecture
 ## What is it?
 
-1. Smart Mediator - The Brains .img-float-right[.size-height-150px[![Mediator](./images/diagrams/mediator.svg)]]
-	1. Where config lives
-	1. Decider
-	1. DB Requests
-	1. Outputs messages to all workers
---
-count: false
+
 
 1. Dumb Workers - "Pure" Functions .img-float-right[.size-height-150px[![Worker](./images/diagrams/worker.svg)]]
 	1. Take in single type of message
 	1. Do work described in message
 	1. Output result description back to mediator
+	
+--
+count: false
+
+1. Smart Mediator - The Brains .img-float-right[.size-height-150px[![Mediator](./images/diagrams/mediator.svg)]]
+	1. Where config lives
+	1. Decider
+	1. DB Requests
+	1. Outputs messages to all workers
 	
 .summary[A smart mediator leads dumb workers, deploy independently]
 	
@@ -129,7 +132,8 @@ class: slide-secondary
 ## State Juggling
 
 1. Application State
-	1. Concurrent everything - Offload to DB
+	1. Functions are stateless an run concurrently: 
+	    - Rely on DB for ultimate source of truth
 	1. DBs are made for concurrency and order
 	1. Can be pretty cheap and managed
 	
@@ -166,11 +170,10 @@ class: left, middle, slide-title-alt
 class: slide-secondary large-content
 # Demo - Design
 
-## Problem: Need a weather gif and thumbnails
-1. Download each image (on a timer/manually)
-1. For each image create a thumbnail
-1. Once we have [X] frames, create weather gif
-1. Send us an email when it's done
+## Challenge: Create animated GIFs from weather maps
+1. Download the latest weather maps every X minutes
+1. When we have enough map images, create an animated GIF
+1. Send out an email with the weather GIF, and image thumbnails
 
 .summary[Simple example, but scales really well!]
 
@@ -390,9 +393,9 @@ Go quick, similar to fetcher
 
 
 class: slide-secondary
-# Fetcher and Mediator
+# Mediator
 
-.center[.size-height-full[![Data Flow Fetcher/Mediator](./images/diagrams/demo-fetcher-mediator.svg)]]
+.center[.size-height-full[![Data Flow Fetcher/Mediator](./images/diagrams/mediator.svg)]]
 
 ---
 class: slide-primary
