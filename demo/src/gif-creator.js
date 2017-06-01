@@ -48,7 +48,7 @@ exports.handler = async function (message, context, callback) {
 			imgPaths.join(' '),
 			// Destination GIF
 			'/tmp/animated.gif'
-		].join(''));
+		].join(' '));
 
 		// Save back to S3
 		const uploadLocation = {
