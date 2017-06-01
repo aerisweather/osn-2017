@@ -1,12 +1,11 @@
+const AWS = require('aws-sdk');
 const DynamoDbDataFlow = require("./DynamoDbDataFlow");
 
+AWS.config.loadFromPath(`${__dirname}/../../deploy-credentials.ignore.json`);
 
 (async () => {
-	const client = new DynamoDbDataFlow();
+	const client = new DynamoDbDataFlow({TableName: 'osn2017-aeris'});
 
-	await new Promise((resolve, reject) => {
-		setTimeout(resolve, 3000);
-	});
 	// Create a bunch of messages
 	const messages = [
 		{
@@ -89,8 +88,8 @@ const DynamoDbDataFlow = require("./DynamoDbDataFlow");
 
 	// Look for a message
 	const results = await client.findByValidTime({
-		type:    'did-create-thumbnail',
-		imageId: 'radar-mn',
+		type:         'did-create-thumbnail',
+		imageId:      'radar-mn',
 		minValidTime: 600
 	});
 
