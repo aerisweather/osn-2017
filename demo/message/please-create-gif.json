@@ -2,11 +2,15 @@
   "type": "please-create-gif",
   "imageId": "temps",
   "locations": [
-    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/1.png" },
-    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/2.png" },
-    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/3.png" },
-    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/4.png" },
-    { "Bucket": "aeris-osn-2017", "Key": "gifs-test/5.png" }
+    {
+      "Bucket": "osn2017-aeris-afd6c",
+      "Key": "amp-image-fetcher/DsGVvRrlXhwuRAduyhx1V_HTQs6AKlrWLYcVSgEW96fKuGqM6gmTX2bMXumaH8/flat,temperatures:80,admin/1200x800/el%20dorado,ar,6/20170601160000_20170601160000.png"
+    },
+    {
+      "Bucket": "osn2017-aeris-afd6c",
+      "Key": "amp-image-fetcher/DsGVvRrlXhwuRAduyhx1V_HTQs6AKlrWLYcVSgEW96fKuGqM6gmTX2bMXumaH8/flat,temperatures:80,admin/1200x800/el%20dorado,ar,6/20170601170000_20170601170000.png"
+    }
+
   ],
-  "validTime": "2017-05-24T20:57:55.885Z"
+  "validTime": 1000
 }

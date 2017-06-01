@@ -1,15 +1,16 @@
 {
   "type": "please-fetch-amp-image",
-  "imageId": "severe",
+  "imageId": "severe-2",
   "layers": [
     "flat-dk",
-    "alerts",
+    "satellite-vis:30",
+    "admin-cities-dk",
     "radar",
     "stormcells"
   ],
-  "width": 1200,
-  "height": 800,
-  "center": "tulsa,ok",
-  "zoom": 4,
-  "validTime": "0"
+  "width": 800,
+  "height": 600,
+  "center": "el dorado,ar",
+  "zoom": 6,
+  "validTime": "current"
 }

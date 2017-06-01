@@ -3,7 +3,7 @@
  * Fetch `MSG_COUNT` images
  * using please-fetch-amp-image as a template
  */
-const MSG_COUNT = 20;
+const MSG_COUNT = 5;
 const _ = require('lodash');
 const AWS = require('aws-sdk');
 AWS.config.loadFromPath(`${__dirname}/../deploy-credentials.ignore.json`);
