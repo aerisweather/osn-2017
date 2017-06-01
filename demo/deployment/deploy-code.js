@@ -9,7 +9,7 @@ const fs = require('fs');
 	// Create a zip archive of the code
 	console.log('Archiving code...');
 	const archiveFile = `${__dirname}/archive.zip`;
-	execSync(`zip -r -9 ${archiveFile} ./`, {
+	execSync(`zip -r ${archiveFile} ./`, {
 		cwd: process.cwd()
 	});
 	// Load the archive into memory, and delete the file
