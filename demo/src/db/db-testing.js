@@ -81,6 +81,12 @@ const DynamoDbDataFlow = require("./DynamoDbDataFlow");
 	// Save the messages to the db
 	await messages.map(msg => client.save(msg));
 
+	const singleResult = await client.findLatestValidTime({
+		type:    'did-create-thumbnail',
+		imageId: 'radar-mn',
+	});
+	console.log(JSON.stringify(singleResult, null, 2));
+
 	// Look for a message
 	const results = await client.findByValidTime({
 		type:    'did-create-thumbnail',

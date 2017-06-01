@@ -30,13 +30,13 @@ const table = "osn2017-aeris-dataflow";
 
 class DynamoDbDataFlow {
 
-	constructor() {
+	constructor(opts) {
 
 	}
 
 	async save(message) {
 		message['typeImageId'] = `${message.type}:${message.imageId}`;
-		return await dynamodb.putItem({
+		return await docClient.put({
 			TableName: table,
 			Item: message,
 			ReturnedValues: 'NONE',
@@ -48,13 +48,13 @@ class DynamoDbDataFlow {
 		const params = {
 			TableName: table,
 			IndexName: 'typeImageId-validTime-index',
-			ConsistentRead: true,
 			Limit: 1,
 			KeyConditionExpression: 'typeImageId = :typeImageId',
-			ExpressionAttributeValues: { ':typeImageId': {'S': `${type}:${imageId}`}},
+			ExpressionAttributeValues: { ':typeImageId': `${type}:${imageId}`},
 			ScanIndexForward: false
 		};
-		return dynamodb.query(params).promise();
+		const results = await docClient.query(params).promise();
+		return results.Items[0];
 	}
 
 	async findByValidTime({type, imageId, minValidTime = Number.MIN_SAFE_INTEGER, maxValidTime = Number.MAX_SAFE_INTEGER, limit = 99}) {
@@ -64,13 +64,14 @@ class DynamoDbDataFlow {
 			Limit: limit,
 			KeyConditionExpression: 'typeImageId = :typeImageId AND validTime BETWEEN :minValidTime AND :maxValidTime',
 			ExpressionAttributeValues: {
-				':typeImageId': {S: `${type}:${imageId}`},
-				':minValidTime': {N: minValidTime.toString()},
-				':maxValidTime': {N: maxValidTime.toString()}
+				':typeImageId': `${type}:${imageId}`,
+				':minValidTime': minValidTime,
+				':maxValidTime': maxValidTime
 			},
 			ScanIndexForward: false
 		};
-		return dynamodb.query(params).promise();
+		const results = await docClient.query(params).promise();
+		return results.Items;
 	}
 }
 
