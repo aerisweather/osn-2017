@@ -23,6 +23,7 @@ const STACK_NAME = 'osn2017-aeris';
 					Type:       "AWS::DynamoDB::Table",
 					Properties: {
 						TableName:              'osn2017-aeris',
+						// Primary Key = type + dateCreated (compound)
 						KeySchema:              [
 							{AttributeName: "type", KeyType: "HASH"},  //Partition key
 							{AttributeName: "dateCreated", KeyType: "RANGE"}  //Sort key
@@ -33,10 +34,13 @@ const STACK_NAME = 'osn2017-aeris';
 							{AttributeName: "typeImageId", AttributeType: "S"},  //Partition key
 							{AttributeName: "validTime", AttributeType: "N"}
 						],
+						// Secondary index = type + imageId + validTime
+						//  sorted by validTime
 						GlobalSecondaryIndexes: [
 							{
 								IndexName:             "typeImageId-validTime-index",
 								KeySchema:             [
+									// We generate the `typeImageId`, to use as a partition key
 									{AttributeName: "typeImageId", KeyType: "HASH"},  //Partition key
 									{AttributeName: "validTime", KeyType: "RANGE"}  //Sort key
 								],
