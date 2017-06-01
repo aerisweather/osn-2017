@@ -43,7 +43,7 @@ class: slide-secondary
 # What is Lambda good for?
 
 1. Batch Processing
-	1. Massively parallel - 100 concurrent by default
+	1. Massively parallel - 1000 concurrent by default
 1. Small Compute
 	1. Charged in 100ms increments
 	1. No idling EC2 Server
@@ -57,7 +57,6 @@ class: slide-primary
 1. Fine grained usage based pricing
 	1. Large data sets coming in hourly, every 6 hours
 	1. Idle resources
-	1. Different than low usage API as seen before
 	1. Hard to scale up/down preemptively
 ???
 Forecasts primary motivator
@@ -106,7 +105,7 @@ class: slide-secondary
 ## What is it?
 
 1. Smart Mediator - The Brains .img-float-right[.size-height-150px[![Mediator](./images/diagrams/mediator.svg)]]
-	1. Config lives
+	1. Where config lives
 	1. Decider
 	1. DB Requests
 	1. Outputs messages to all workers
@@ -118,7 +117,7 @@ count: false
 	1. Do work described in message
 	1. Output result description back to mediator
 	
-.summary[A smart mediator leads dumb workers, update independently]
+.summary[A smart mediator leads dumb workers, deploy independently]
 	
 ---
 name:data-flow-pattern
@@ -145,49 +144,38 @@ class: left, middle, slide-title-alt
 ## AWS Lambda - Creating Weather GIFs
 
 ---
-class: slide-secondary
+class: slide-secondary large-content
 # Demo - Design
 
 ## Problem: Need a weather gif and thumbnails
-1. Download each frame image 
+1. Download each image (on a timer/manually)
 1. For each image create a thumbnail
-1. Once we have all frames, create weather gif
+1. Once we have [X] frames, create weather gif
+1. Send us an email when it's done
 
 .summary[Simple example, but scales really well!]
 
 ---
 class: slide-secondary
-# Demo - Desisgn
+# Demo - Design
 
-.center[.size-height-600px[![Data Flow Icon](./images/diagrams/demo-full.svg)]]
+.center[.size-height-full[![Data Flow Icon](./images/diagrams/demo-full.svg)]]
 
 ---
 class: slide-secondary large-content
 # Demo - Resources needed
 
-* **Redis Cluster** - For saving data (our main DB)
-* **S3** - Worker storage
-* **3 Workers** - Fetching, Thumbnail Creation, Gif Creation
-* **1 Mediator** - To coordinate it all
+* **DB** - For saving state, DynamoDB
+* **Shared File Storage** - Worker storage, S3
+* **4 Workers** - Lambda functions for Fetching, Thumbnail Creation, Gif Creation, Emailing
+* **1 Mediator** - Lambda function to coordinate it all
 
----
-class: slide-secondary
-# Coordinating Resources
-
-Lots of little pieces (microservice architecture) can be a management nightmare!
-
-1. Cloud Formation Templates
-	1. All the resources for one piece in one spot, IAM roles, Bucket policies, etc.
-	1. Reproducible, makes progressing through environments east development -> staging -> production
-1. CI Pipeline
-	1. Plug in your CI pipeline to AWS to publish new versions of your code
-	1. Small/simple workers make individual updates less scary and can be done more frequently - Branches are code debt!
 ---
 class: slide-primary
 # Fetcher
-## Get an image via URL, save image to S3
+## Get an image via URL, save image to shared storage
 
-Receives "please" message from mediator:
+Receives "please" message from outside source (timer/manually):
 ```json
 {
   "type": "please-fetch-amp-image",
@@ -201,15 +189,16 @@ Receives "please" message from mediator:
   "height": 600,
   "center": "tulsa,ok",
   "zoom": 4,
-  "validTime": "2017-05-24T20:57:55.885Z"
+  "validTime": 2345678910
 }
 ```
 
 ---
-
 class: slide-primary
 # Fetcher
-## Get an image via URL, save image to S3
+## Get an image via URL, save image to shared storage
+
+Fetches image, saves in storage location of worker's choice (shared)
 
 Will send a "did" message to mediator:
 ```json
@@ -226,7 +215,223 @@ Will send a "did" message to mediator:
 ```
 
 ---
+class: left, middle, slide-title-alt
+# [Fetcher Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+## DEMO: Get an image via URL, save image to S3
 
+???
+In depth
+* Fetch
+* Save
+* Send Message Back
+---
+class: slide-primary
+# Thumbnail Creator
+## Load image from S3, resize/crop, save to S3
+
+Receives "please" message (from mediator):
+```json
+{
+  "type": "please-create-thumbnail",
+  "imageId": "temps",
+  "location": {
+    "Bucket": "osn2017-aeris-abcd",
+    "Key": "amp-image-fetcher/[bunch of stuff].png"
+  },
+  "width": 200,
+  "height": 200,
+  "validTime": 100
+}
+```
+
+---
+class: slide-primary
+# Thumbnail Creator
+## Load image from S3, resize/crop, save to S3
+
+Will send a "did" message to mediator:
+```json
+{
+  "type": "did-create-thumbnail",
+  "dateCreated": 123456789,
+  "imageId": "temps",
+  "validTime": 4567891011,
+  "location": {
+    "Bucket": "osn2017-aeris-abcd",
+    "Key": "thumbnail-creator/[bunch of stuff].png"
+  }
+}
+```
+
+---
+class: left, middle, slide-title-alt
+# [Thumbnail Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+## DEMO: Get an image via URL, save image to S3
+
+???
+Go quick, similar to fetcher
+---
+class: slide-primary
+# Gif Creator
+## Load list of images from S3, creates GIF, saves
+
+Receives "please" message (from mediator):
+```json
+{
+  "type": "please-create-gif",
+  "imageId": "temps",
+  "locations": [
+    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/1.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/2.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/3.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/4.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/5.png" }
+  ],
+  "validTime": 4567891011
+}
+```
+
+---
+class: slide-primary
+# Gif Creator
+## Load image from S3, resize/crop, save
+
+Will send a "did" message to mediator:
+```json
+{
+  "type": "did-create-gif",
+  "dateCreated": 123456789,
+  "imageId": "temps",
+  "validTime": 4567891011,
+  "location": {
+    "Bucket": "osn2017-aeris-abcd",
+    "Key": "thumbnail-creator/[bunch of stuff].gif"
+  }
+}
+```
+
+---
+class: left, middle, slide-title-alt
+# [Gif Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+## DEMO: Make gif from S3 images, save back to S3
+
+???
+Go quick, similar to fetcher
+---
+
+
+
+class: slide-primary
+# Email Sender
+## Sends a message it's given
+
+Receives "please" message (from mediator):
+```json
+{
+  "type": "please-send-email",
+  "dateCreated": 123456789,
+  "to": ["user@example.com", "person@example.com"],
+  "from": "dataflow@example.com",
+  "body": "<b>Your image is ready:</b><img src=\"https://s3...\"",
+  "subject": "Gif Created"
+}
+```
+
+---
+class: slide-primary
+# Email Sender
+## Sends a message it's given
+
+Will send a "did" message to mediator:
+```json
+{
+  "type": "did-send-email",
+  "dateCreated": 123456789,
+  "to": ["user@example.com", "person@example.com"],
+  "from": "dataflow@example.com",
+  "body": "<b>Your image is ready:</b><img src=\"https://s3...\"",
+  "subject": "Gif Created"
+}
+```
+
+---
+class: left, middle, slide-title-alt
+# [Email Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+## DEMO: Send an email
+
+???
+Go quick, similar to fetcher
+---
+
+
+
+class: slide-secondary
+# Fetcher and Mediator
+
+.center[.size-height-full[![Data Flow Fetcher/Mediator](./images/diagrams/demo-fetcher-mediator.svg)]]
+
+---
+class: slide-primary
+# Mediator
+## Coordinates everything, interacts with DB
+
+Receives lots of messages, in this case a "did-fetch-amp-image" message from our Fetcher worker:
+```json
+{
+  "type": "did-fetch-amp-image",
+  "dateCreated": 123456789,
+  "imageId": "temps",
+  "validTime": 4567891011,
+  "location": {
+    "Bucket": "osn2017-aeris-abcd",
+    "Key": "amp-image-fetcher/[bunch of stuff].png"
+  }
+}
+```
+
+---
+class: slide-primary
+# Mediator
+## Coordinates everything, interacts with DB
+
+Decides what to do with it. We'll have it:
+
+1. Create a thumbnail
+1. Create a gif of images once we have enough
+
+```json
+{
+  "type": "please-create-thumbnail",
+  "imageId": "temps",
+  "location": {
+    "Bucket": "aeris-osn-2017",
+    "Key": "amp-image-fetcher/[lots of stuff].png"
+  },
+  "width": 200,
+  "height": 200,
+  "validTime": 100
+}
+```
+
+---
+class: left, middle, slide-title-alt
+# [Mediator Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+## Receives messages, saves, sends out other messages
+
+---
+class: slide-secondary
+# Coordinating Resources
+
+Lots of little pieces (microservice architecture) can be a management nightmare!
+
+1. Cloud Formation Templates
+	1. All the resources for one piece in one spot, IAM roles, Bucket policies, etc.
+	1. Reproducible, makes progressing through environments east development -> staging -> production
+1. CI Pipeline
+	1. Plug in your CI pipeline to AWS to publish new versions of your code
+	1. Small/simple workers make individual updates less scary and can be done more frequently - Branches are code debt!
+
+---
 @ todo:
 Security:
 1. Mediator in a VPC, others outside
@@ -241,6 +446,9 @@ Where else will you hit a scaling issue? Once you "leave lambda"
  * For us it was after our import was done
 
 Connecting to AWS resources is a PITA if inside a VPC
+VPC is a big bag of worms
+
+Save all images locally
 
 ---
 

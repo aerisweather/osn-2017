@@ -12,7 +12,7 @@ h1, h2, h3 {
 
 .remark-slide-content h2 {
 	font-family: 'Open Sans';
-	font-size: 1.8em;
+	font-size: 1.4em;
 	font-style: italic;
 }
 
@@ -115,12 +115,13 @@ h1 .inline-icon img {
 	height: 150px;
 }
 
-.size-height-600px * {
-	height: 600px;
+.size-height-full * {
+	height: 400px;
 }
 
 .large-content p, .large-content li, .large-content span {
-	font-size: 1.5em;
+	font-size: 1.4em;
+	line-height: 1.8em;
 }
 .remark-container {
 	background-color: rgb(6, 15, 23);
