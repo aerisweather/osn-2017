@@ -120,6 +120,21 @@ count: false
 .summary[A smart mediator leads dumb workers, deploy independently]
 	
 ---
+class: slide-secondary
+# Data Flow Architecture
+## State Juggling
+
+1. Application State
+	1. Concurrent everything - Offload to DB
+	1. DBs are made for concurrency and order
+	1. Can be pretty cheap and managed
+	
+1. Larger Files
+	1. Share storage across all workers
+	1. Workers save to their own little place, readable by others
+
+---
+
 name:data-flow-pattern
 class: slide-secondary
 # Data Flow Pattern
@@ -130,7 +145,7 @@ class: slide-secondary
 	1. Verbose config for each thing
 	1. Forking workflows difficult
 --
-
+count: false
 1. Why Data Flow?
 	1. Need more advanced Workflows
 	1. Microservice coordination
@@ -424,42 +439,87 @@ class: slide-secondary
 
 Lots of little pieces (microservice architecture) can be a management nightmare!
 
-1. Cloud Formation Templates
-	1. All the resources for one piece in one spot, IAM roles, Bucket policies, etc.
-	1. Reproducible, makes progressing through environments east development -> staging -> production
-1. CI Pipeline
-	1. Plug in your CI pipeline to AWS to publish new versions of your code
-	1. Small/simple workers make individual updates less scary and can be done more frequently - Branches are code debt!
+### Templated Deployment (CloudFormation, Ansible, etc.)
+1. All the resources for one piece in one spot, IAM roles, Bucket policies, etc.
+1. Reproducible, makes progressing through environments east development -> staging -> production
+1. Lots of items are repeated.
+--
+count: false
+
+### Environment config on S3
+1. Encrypt at rest
+1. Consistent deployments
+	
+---
+class: slide-secondary
+# Coordinating Resources
+
+Lots of little pieces (microservice architecture) can be a management nightmare!
+
+### CI Pipeline
+1. Plug in your CI pipeline to AWS to publish new versions of your code
+1. Small/simple workers make individual updates less scary and can be done more frequently - Branches are code debt!
+--
+count: false
+
+### Small Pieces
+1. Data Flow allows for simple explicit interfaces
+1. Updates can be done with little worry to each small piece
+---
+class: slide-primary
+# Pitfalls
+
+1. VPCs and Lambda are a giant PITA
+	1. Mediator can be run in a VPC, but need NAT gateway ($$$)
+	1. Then has access to VPC resources like DB/Cache
+	1. The more outside VPCs the better
+--
+count: false
+1. Concurrent things are hard
+	1. Lots of things going on at once
+	1. Simultaneous logs and invocations all happening at once
+--
+count: false
+1. Event hubs are all side effects
+	1. Not always explicit what will happen
+--
+count: false
+1. Where else will you hit a scaling issue? Once you "leave lambda"
+	1. For us it was after our import was done
+---
+class: large-content
+# Try it for Yourself!
+
+* Use our project as a boilerplate
+* Provisioning script creates CloudFormation Template
+* All AWS Free Tier resources
 
 ---
+
 @ todo:
-Security:
-1. Mediator in a VPC, others outside
-	1. Mediator needs access to private resources, no internet access
-	1. Workers that need internet access should be outside of VPC (costly inside)
-1. Environment config on S3
-	1. Encrypt at rest.
-State in a stateless environment - concurrent everything, offload that to db
- * Eventual concurrency here is bad. Lots can happen "at once"
 
-Where else will you hit a scaling issue? Once you "leave lambda"
- * For us it was after our import was done
-
-Connecting to AWS resources is a PITA if inside a VPC
-VPC is a big bag of worms
-
+Fill in github link
+Remove credentials
 Save all images locally
 
 ---
-
+class:  slide-primary
 # Questions?
 
 ### Slides and demo code available online: http://github.com/aerisweather
 
-#### .inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
+### .inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
 #### Free Demo Accounts API and Maps: https://aerisweather.com
-
+#### We're Hiring: https://aerisweather.com/careers/senior-api-developer/
 ## Thanks!
 
-### Seth Miller https://github.com/four43
-### Edan Schwartz https://github.com/eschwartz
+.presenter-block[
+.headshot[![Seth Miller](./images/headshots/seth_miller.jpg)]
+# Seth Miller
+.connect-logo[![GitHub Logo](./images/github-logo-light.svg)] four43
+]
+.presenter-block[
+.headshot[![Edan Schwartz](./images/headshots/edan_schwartz.jpg)]
+# Edan Schwartz 
+.connect-logo[![GitHub Logo](./images/github-logo-light.svg)] eschwartz
+]
