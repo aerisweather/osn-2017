@@ -4,275 +4,246 @@ const fs = require('fs');
 
 AWS.config.loadFromPath(`${__dirname}/../deploy-credentials.ignore.json`);
 
-const bucketName = getBucketName();
-
+const cf = new AWS.CloudFormation();
 const archiveKey = `code/archive-${Date.now()}.zip`;
-
-// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html
 const STACK_NAME = 'osn2017-aeris';
-const cfTemplate = {
-	Resources: {
-		S3:                     {
-			Type:       'AWS::S3::Bucket',
-			Properties: {
-				BucketName: bucketName
-			}
-		},
-		VpcMain:                {
-			Type:       'AWS::EC2::VPC',
-			Properties: {
-				CidrBlock:          '10.0.0.0/16',
-				EnableDnsHostnames: true,
-				Tags:               [
-					{
-						Key:   'Name',
-						Value: 'osn2017-main'
-					}
-				]
 
-			}
-		},
-		VpcSubnetMain:          {
-			Type:       'AWS::EC2::Subnet',
-			Properties: {
-				VpcId:     {Ref: 'VpcMain'},
-				CidrBlock: '10.0.1.0/24',
-				Tags:      [
-					{
-						Key:   'Name',
-						Value: 'osn2017-subnet-0'
+(async () => {
+	try {
+		const bucketName = await getBucketName();
+		const cfTemplate = {
+			Resources: {
+				S3:                         {
+					Type:       'AWS::S3::Bucket',
+					Properties: {
+						BucketName: bucketName
 					}
-				]
-			}
-		},
-		RedisSecurityGroup:     {
-			Type:       'AWS::EC2::SecurityGroup',
-			Properties: {
-				VpcId:                {Ref: 'VpcMain'},
-				GroupName:            'osn2017-RedisCacheCluster',
-				GroupDescription:     'Redis Cache Cluster',
-				SecurityGroupIngress: [
-					{
-						CidrIp:     '10.0.0.0/16',
-						IpProtocol: 'TCP',
-						FromPort:   6379,
-						ToPort:     6379
-					}
-				]
-			}
-		},
-		RedisSubnetGroup:       {
-			Type:       'AWS::ElastiCache::SubnetGroup',
-			Properties: {
-				CacheSubnetGroupName: 'osn2017-Redis-Main',
-				Description:          'OSN2017 Redis Main Group',
-				SubnetIds:            [{Ref: 'VpcSubnetMain'}]
-			}
-		},
-		Redis:                  {
-			Type:       'AWS::ElastiCache::CacheCluster',
-			Properties: {
-				ClusterName:          'osn2017-redis',
-				CacheNodeType:        'cache.t2.micro',
-				Engine:               'redis',
-				NumCacheNodes:        1,
-				CacheSubnetGroupName: {Ref: 'RedisSubnetGroup'},
-				VpcSecurityGroupIds:  [
-					{Ref: 'RedisSecurityGroup'}
-				]
-			}
-		},
-		LambdaIamRole:          {
-			Type:       'AWS::IAM::Role',
-			Properties: {
-				RoleName:                 'osn2017-lambda-role',
-				AssumeRolePolicyDocument: JSON.stringify(
-					{
-						Version:   "2012-10-17",
-						Statement: [
+				},
+				DynamoDBTable:              {
+					Type:       "AWS::DynamoDB::Table",
+					Properties: {
+						TableName:              'osn2017-aeris',
+						KeySchema:              [
+							{AttributeName: "type", KeyType: "HASH"},  //Partition key
+							{AttributeName: "dateCreated", KeyType: "RANGE"}  //Sort key
+						],
+						AttributeDefinitions:   [
+							{AttributeName: "type", AttributeType: "S"},
+							{AttributeName: "dateCreated", AttributeType: "N"},
+							{AttributeName: "typeImageId", AttributeType: "S"},  //Partition key
+							{AttributeName: "validTime", AttributeType: "N"}
+						],
+						GlobalSecondaryIndexes: [
 							{
-								Effect:    "Allow",
-								Principal: {
-									Service: "lambda.amazonaws.com"
+								IndexName:             "typeImageId-validTime-index",
+								KeySchema:             [
+									{AttributeName: "typeImageId", KeyType: "HASH"},  //Partition key
+									{AttributeName: "validTime", KeyType: "RANGE"}  //Sort key
+								],
+								Projection:            {
+									ProjectionType: "ALL"
 								},
-								Action:    "sts:AssumeRole"
+								ProvisionedThroughput: {
+									ReadCapacityUnits:  5,
+									WriteCapacityUnits: 5
+								}
 							}
+						],
+						ProvisionedThroughput:  {
+							ReadCapacityUnits:  5,
+							WriteCapacityUnits: 5
+						}
+					}
+				},
+				LambdaIamRole:              {
+					Type:       'AWS::IAM::Role',
+					Properties: {
+						RoleName:                 'osn2017-lambda-role',
+						AssumeRolePolicyDocument: JSON.stringify(
+							{
+								Version:   "2012-10-17",
+								Statement: [
+									{
+										Effect:    "Allow",
+										Principal: {
+											Service: "lambda.amazonaws.com"
+										},
+										Action:    "sts:AssumeRole"
+									}
+								]
+							}
+						),
+						ManagedPolicyArns:        [
+							'arn:aws:iam::aws:policy/AWSLambdaFullAccess',
+							'arn:aws:iam::aws:policy/AmazonS3FullAccess',
+							'arn:aws:iam::aws:policy/AmazonVPCFullAccess',
+							'arn:aws:iam::aws:policy/AmazonSESFullAccess'
 						]
 					}
-				),
-				ManagedPolicyArns:        [
-					'arn:aws:iam::aws:policy/AWSLambdaFullAccess',
-					'arn:aws:iam::aws:policy/AmazonS3FullAccess',
-					'arn:aws:iam::aws:policy/AmazonVPCFullAccess',
-					'arn:aws:iam::aws:policy/AmazonSESFullAccess'
-				]
-			}
-		},
-		LambdaMediator:         {
-			Type:       'AWS::Lambda::Function',
-			Properties: {
-				FunctionName: 'osn2017-mediator',
-				Description:  'Main brains of the Data Flow pattern',
-				Runtime:      'nodejs6.10',
-				Code:         {
-					S3Bucket: {'Ref': 'S3'},
-					S3Key:    archiveKey
 				},
-				MemorySize:   128,
-				Timeout:      30,
-				Handler:      'build/mediator.handler',
-				Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
-				VpcConfig:    {
-					SecurityGroupIds: [{Ref: 'RedisSecurityGroup'}],
-					SubnetIds:        [{Ref: 'VpcSubnetMain'}]
-				},
-				Environment:  {
-					Variables: {
-						REDIS_HOSTNAME: {'Fn::GetAtt': ["Redis", "RedisEndpoint.Address"]},
-						REDIS_PORT:     {'Fn::GetAtt': ["Redis", "RedisEndpoint.Port"]}
+				LambdaFuncMediator:         {
+					Type:       'AWS::Lambda::Function',
+					Properties: {
+						FunctionName: 'osn2017-mediator',
+						Description:  'Main brains of the Data Flow pattern',
+						Runtime:      'nodejs6.10',
+						Code:         {
+							S3Bucket: {'Ref': 'S3'},
+							S3Key:    archiveKey
+						},
+						MemorySize:   128,
+						Timeout:      30,
+						Handler:      'build/mediator.handler',
+						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
+						Environment:  {
+							Variables: {
+								DYNAMODB_TABLE_NAME:   {Ref: 'DynamoDBTable'},
+								/*AMP_IMAGE_FETCHER_ARN: {'Fn::GetAtt': ["LambdaFuncAmpImageFetcher", "Arn"]},
+								GIF_CREATOR_ARN:       {'Fn::GetAtt': ["LambdaFuncGifCreator", "Arn"]},
+								THUMBNAIL_CREATOR_ARN: {'Fn::GetAtt': ["LambdaFuncThumbnailCreator", "Arn"]},
+								EMAIL_SENDER_ARN:      {'Fn::GetAtt': ["LambdaFuncEmailSender", "Arn"]}*/
+							}
+						}
 					}
-				}
-			}
-		},
-		LambdaAmpImageFetcher:  {
-			Type:       'AWS::Lambda::Function',
-			Properties: {
-				FunctionName: 'osn2017-amp-image-fetcher',
-				Description:  'Fetches images and saves them to S3',
-				Runtime:      'nodejs6.10',
-				Code:         {
-					S3Bucket: {'Ref': 'S3'},
-					S3Key:    archiveKey
 				},
-				MemorySize:   512,
-				Timeout:      60,
-				Handler:      'build/amp-image-fetcher.handler',
-				Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
-				Environment:  {
-					Variables: {
-						S3_BUCKET:     {'Ref': 'S3'},
-						MEDIATOR_ARN:  {'Fn::GetAtt': ["LambdaMediator", "Arn"]},
-						CLIENT_ID:     'DsGVvRrlXhwuRAduyhx1V',
-						CLIENT_SECRET: 'HTQs6AKlrWLYcVSgEW96fKuGqM6gmTX2bMXumaH8'
+				LambdaFuncAmpImageFetcher:  {
+					Type:       'AWS::Lambda::Function',
+					Properties: {
+						FunctionName: 'osn2017-amp-image-fetcher',
+						Description:  'Fetches images and saves them to S3',
+						Runtime:      'nodejs6.10',
+						Code:         {
+							S3Bucket: {'Ref': 'S3'},
+							S3Key:    archiveKey
+						},
+						MemorySize:   512,
+						Timeout:      60,
+						Handler:      'build/amp-image-fetcher.handler',
+						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
+						Environment:  {
+							Variables: {
+								S3_BUCKET:     {'Ref': 'S3'},
+								MEDIATOR_ARN:  {'Fn::GetAtt': ["LambdaFuncMediator", "Arn"]},
+								CLIENT_ID:     'DsGVvRrlXhwuRAduyhx1V',
+								CLIENT_SECRET: 'HTQs6AKlrWLYcVSgEW96fKuGqM6gmTX2bMXumaH8'
+							}
+						}
 					}
-				}
-			}
-		},
-		LambdaGifCreator:       {
-			Type:       'AWS::Lambda::Function',
-			Properties: {
-				FunctionName: 'osn2017-gif-creator',
-				Description:  'Combines images into a GIF and saves them to S3',
-				Runtime:      'nodejs6.10',
-				Code:         {
-					S3Bucket: {'Ref': 'S3'},
-					S3Key:    archiveKey
 				},
-				MemorySize:   1024,
-				Timeout:      60,
-				Handler:      'build/gif-creator.handler',
-				Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
-				Environment:  {
-					Variables: {
-						S3_BUCKET:    {'Ref': 'S3'},
-						MEDIATOR_ARN: {'Fn::GetAtt': ["LambdaMediator", "Arn"]}
+				LambdaFuncGifCreator:       {
+					Type:       'AWS::Lambda::Function',
+					Properties: {
+						FunctionName: 'osn2017-gif-creator',
+						Description:  'Combines images into a GIF and saves them to S3',
+						Runtime:      'nodejs6.10',
+						Code:         {
+							S3Bucket: {'Ref': 'S3'},
+							S3Key:    archiveKey
+						},
+						MemorySize:   1024,
+						Timeout:      60,
+						Handler:      'build/gif-creator.handler',
+						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
+						Environment:  {
+							Variables: {
+								S3_BUCKET:    {'Ref': 'S3'},
+								MEDIATOR_ARN: {'Fn::GetAtt': ["LambdaFuncMediator", "Arn"]}
+							}
+						}
 					}
-				}
-			}
-		},
-		LambdaThumbnailCreator: {
-			Type:       'AWS::Lambda::Function',
-			Properties: {
-				FunctionName: 'osn2017-thumbnail-creator',
-				Description:  'Resizes images to thumbnails and saves them to S3',
-				Runtime:      'nodejs6.10',
-				Code:         {
-					S3Bucket: {'Ref': 'S3'},
-					S3Key:    archiveKey
 				},
-				MemorySize:   128,
-				Timeout:      3,
-				Handler:      'build/thumbnail-creator.handler',
-				Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
-				Environment:  {
-					Variables: {
-						S3_BUCKET:    {'Ref': 'S3'},
-						MEDIATOR_ARN: {'Fn::GetAtt': ["LambdaMediator", "Arn"]}
+				LambdaFuncThumbnailCreator: {
+					Type:       'AWS::Lambda::Function',
+					Properties: {
+						FunctionName: 'osn2017-thumbnail-creator',
+						Description:  'Resizes images to thumbnails and saves them to S3',
+						Runtime:      'nodejs6.10',
+						Code:         {
+							S3Bucket: {'Ref': 'S3'},
+							S3Key:    archiveKey
+						},
+						MemorySize:   128,
+						Timeout:      3,
+						Handler:      'build/thumbnail-creator.handler',
+						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
+						Environment:  {
+							Variables: {
+								S3_BUCKET:    {'Ref': 'S3'},
+								MEDIATOR_ARN: {'Fn::GetAtt': ["LambdaFuncMediator", "Arn"]}
+							}
+						}
 					}
-				}
-			}
-		},
-		LambdaEmailSender:     {
-			Type:       'AWS::Lambda::Function',
-			Properties: {
-				FunctionName: 'osn2017-email-sender',
-				Description:  'Send emails',
-				Runtime: 'nodejs6.10',
-				Code: {
-					S3Bucket: { 'Ref': 'S3' },
-					S3Key: archiveKey
 				},
-				MemorySize:   128,
-				Timeout:      3,
-				Handler:      'build/email-sender.handler',
-				Role:         { 'Fn::GetAtt': [ "LambdaIamRole", "Arn" ]},
-				Environment:  {
-					Variables: {
-						MEDIATOR_ARN: { 'Fn::GetAtt': [ "LambdaMediator", "Arn" ]}
+				LambdaFuncEmailSender:      {
+					Type:       'AWS::Lambda::Function',
+					Properties: {
+						FunctionName: 'osn2017-email-sender',
+						Description:  'Send emails',
+						Runtime:      'nodejs6.10',
+						Code:         {
+							S3Bucket: {'Ref': 'S3'},
+							S3Key:    archiveKey
+						},
+						MemorySize:   128,
+						Timeout:      3,
+						Handler:      'build/email-sender.handler',
+						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
+						Environment:  {
+							Variables: {
+								MEDIATOR_ARN: {'Fn::GetAtt': ["LambdaFuncMediator", "Arn"]}
+							}
+						}
 					}
-				}
+				},
 			}
-		},
-	}
-};
+		};
 
-const cf = new AWS.CloudFormation();
+		const existingStack = await isExistingStack();
 
-Promise.resolve()
-// Validate the CloudFormation template
-	.then(() => cf
-		.validateTemplate({
-			TemplateBody: JSON.stringify(cfTemplate)
-		})
-		.promise()
-	)
-	// Create CF stack, or update an existing one
-	.then(isExistingStack)
-	.then((existingStack) => {
 		if (!existingStack) {
 			console.log(`Creating new stack ${STACK_NAME}...`);
 			// Just create the S3 portion for now, we'll upload all the app data before creating all the lambda resources.
-			return createStack(STACK_NAME, {
-				Resources: {
-					S3: cfTemplate.Resources.S3
-				}
+
+			// Lambda functions without env vars
+			const creationResources = Object.keys(cfTemplate.Resources)
+				.reduce((resourceObj, lambdaResourceKey) => {
+					// Hacky deep copy
+					const resource = JSON.parse(JSON.stringify(cfTemplate.Resources[lambdaResourceKey]));
+
+					if (lambdaResourceKey.startsWith('LambdaFunc')) {
+						resource.Properties.Code = {
+							ZipFile: '[Empty file]'
+						};
+						resource.Properties.Environment = {};
+					}
+					resourceObj[lambdaResourceKey] = resource;
+					return resourceObj;
+				}, {});
+
+			await createStack(STACK_NAME, {
+				Resources: creationResources
 			});
 		}
-	})
-	// Upload the code to s3
-	.then(() => {
+
 		console.log('Uploading updated lambda code...');
-		return uploadArchive({
+		await uploadArchive({
 				Bucket: bucketName,
 				Key:    archiveKey
 			}
-		)
-	})
-	// Update/Create the rest of our components
-	.then(() => {
+		);
+
 		console.log('Executing CF Change Set...');
-		return executeChangeSet(cfTemplate)
-	})
-	.then(
-		() => {
-			console.log('done!');
-			process.exit(0);
-		},
-		(err) => {
-			console.error(err.stack);
-			process.exit(1);
-		}
-	);
+		await executeChangeSet(cfTemplate);
+
+		console.log('done!');
+		process.exit(0);
+	}
+	catch (err) {
+		console.log(err.stack);
+		process.exit(1);
+	}
+
+})();
 
 function createStack(stackName, template) {
 	return cf.createStack({
@@ -310,36 +281,35 @@ function isExistingStack() {
 		})
 }
 
-function executeChangeSet(template) {
+async function executeChangeSet(template) {
 	const changeSetName = "generated-" + Date.now();
-	return cf.createChangeSet({
+	await  cf.createChangeSet({
 		ChangeSetName: changeSetName,
 		StackName:     STACK_NAME,
 		Capabilities:  ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
 		TemplateBody:  JSON.stringify(template),
 		ChangeSetType: 'UPDATE'
-	}).promise()
-		.then(() =>
-			new Promise((resolve, reject) => {
-				let timeout = setInterval(() => {
-					cf.describeChangeSet({
-						StackName:     STACK_NAME,
-						ChangeSetName: changeSetName
-					}).promise()
-						.then((result) => {
-							if (result.ExecutionStatus == 'AVAILABLE') {
-								clearInterval(timeout);
-								resolve();
-							}
-						})
-				}, 3000);
-			})
-		)
-		.then(() => cf.executeChangeSet({
+	}).promise();
+
+	await new Promise((resolve, reject) => {
+		let timeout = setInterval(() => {
+			cf.describeChangeSet({
 				StackName:     STACK_NAME,
 				ChangeSetName: changeSetName
 			}).promise()
-		)
+				.then((result) => {
+					if (result.ExecutionStatus == 'AVAILABLE') {
+						clearInterval(timeout);
+						resolve();
+					}
+				})
+		}, 3000);
+	});
+
+	await cf.executeChangeSet({
+		StackName:     STACK_NAME,
+		ChangeSetName: changeSetName
+	}).promise();
 }
 
 function uploadArchive({Bucket, Key}) {
@@ -372,8 +342,20 @@ function makeId(length) {
 	return text;
 }
 
-function getBucketName() {
+async function getBucketName() {
 	const bucketStatePath = `${__dirname}/../.bucket-name.txt`;
+	try {
+		const existingS3 = await cf.describeStackResource({
+			StackName:         STACK_NAME,
+			LogicalResourceId: 'S3'
+		});
+		console.log(JSON.stringify(existingS3, null, 2));
+		process.exit(1);
+	}
+	catch (err) {
+
+	}
+
 	try {
 		return fs.readFileSync(bucketStatePath, {encoding: 'UTF-8'});
 	}
