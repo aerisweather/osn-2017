@@ -6,12 +6,15 @@
  *
  * 	./script/invoke.js amp-image-fetcher ./message/please-fetch-amp-image.json
  */
+const path = require('path');
 const AWS = require('aws-sdk');
 AWS.config.loadFromPath(`${__dirname}/../deploy-credentials.ignore.json`);
 
 const lambda = new AWS.Lambda();
-const [_bin, _path, workerName, msgFile] = process.argv;
+const [_bin, _path, workerName, relMsgFile] = process.argv;
 
+
+const msgFile = path.resolve(process.cwd(), relMsgFile);
 lambda.invoke({
 	FunctionName: `osn2017-${workerName}`,
 	InvocationType: 'RequestResponse',
