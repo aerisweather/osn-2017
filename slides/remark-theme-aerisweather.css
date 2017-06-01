@@ -29,6 +29,10 @@ ol ol {
 	margin-top: 10px;
 	margin-bottom: 20px;
 }
+ul li {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
 
 ol li p {
 	margin: 0;
@@ -59,17 +63,33 @@ ol li p {
 	padding: 5px;
 }
 
-.slide-title-alt {
+.slide-section {
 	background-color: #e08c16;
 	color: #EEE;
+	text-align: left;
+	vertical-align: middle;
 }
 
-.slide-title-alt h1 {
+.slide-section h1 {
 	font-size: 4em;
 }
 
-.slide-title-alt h2 {
+.slide-section h2 {
 	font-size: 1.8em;
+}
+
+.slide-feature {
+	background-color: rgb(9, 25, 37);
+	color: #EEE;
+	text-align: left;
+}
+.slide-feature .feature-image {
+	display: block;
+	vertical-align: middle;
+	text-align: center;
+}
+.slide-feature .feature-image img {
+	max-height: 350px;
 }
 
 .slide-primary {
@@ -104,7 +124,7 @@ ol li p {
 	vertical-align: middle;
 }
 
-h1 .inline-icon img {
+.right-icon img {
 	height: 1em;
 	display: block;
 	float: right;

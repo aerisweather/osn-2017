@@ -20,7 +20,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf ./build; babel ./src -d --out-dir build --ignore node_modules",
-    "deploy": "npm run build && node ./deployment/provision.js",
+    "deploy": "npm install && npm run build && node ./deployment/provision.js",
     "deploy-code": "npm run build && node ./deployment/deploy-code.js",
     "dynamo-local": "docker kill dynamodb; docker rm dynamodb; docker run -d -p 9005:8000 --name dynamodb peopleperhour/dynamodb"
   },

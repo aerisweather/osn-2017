@@ -14,6 +14,12 @@ PHPStorm window up on presentation mode on projector
 - Terminal up with invoke script to fetch image
 - Terminal up with invoke script to fetch series of images
 ---
+class: slide-section
+
+# What is Lambda?
+## A quick overview
+
+---
 class: slide-secondary
 
 # What is Lambda? (Real Quick!)
@@ -36,8 +42,6 @@ count: false
 	1. ... and Security Groups
 	1. ... and Triggers
 	1. ... and Env Config
---
-count: false
 
 .summary["No OPs" is really more like "Less OPs"]
 ???
@@ -99,8 +103,9 @@ class: slide-primary
 	1. Open Whisk – Uses containers, cool, not a lot of support
 	
 ---
-class: left, middle, slide-title-alt
-# Data Flow Pattern .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+class: slide-section
+# .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+# Data Flow Pattern
 ## Coordinating microservices (like Lambda)
 
 ---
@@ -162,8 +167,8 @@ count: false
 ???
 More than a bunch of random functions calling each other
 ---
-class: left, middle, slide-title-alt
-# Demo .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+class: slide-section
+# Demo .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
 ## AWS Lambda - Creating Weather GIFs
 
 ---
@@ -239,8 +244,8 @@ Will send a "did" message to mediator:
 ```
 
 ---
-class: left, middle, slide-title-alt
-# [Fetcher Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+class: slide-section
+# [Fetcher Code] .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
 ## DEMO: Get an image via URL, save image to S3
 
 ???
@@ -290,12 +295,11 @@ Will send a "did" message to mediator:
 ```
 
 ---
-class: left, middle, slide-title-alt
-# [Thumbnail Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
-## DEMO: Get an image via URL, save image to S3
+class: slide-feature
+# Thumbnail: .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+## Got an image via URL, save image to S3
+.feature-image[![AMP Thumbnail](./images/downloaded/thumbnail-creator.png)]
 
-???
-Go quick, similar to fetcher
 ---
 name: worker-gif
 class: slide-primary
@@ -306,15 +310,18 @@ Receives "please" message (from mediator):
 ```json
 {
   "type": "please-create-gif",
-  "imageId": "temps",
+  "dateCreated": 123456789,
+  "gifDelay": 250,
+  "gifLoop": true,
+  "imageId": "demo",
   "locations": [
-    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/1.png" },
-    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/2.png" },
-    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/3.png" },
-    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/4.png" },
-    { "Bucket": "osn2017-aeris-abcd", "Key": "gifs-test/5.png" }
+    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]1.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]2.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]3.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]4.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]5.png" }
   ],
-  "validTime": 4567891011
+  "validTime": 2345678910
 }
 ```
 
@@ -339,12 +346,11 @@ Will send a "did" message to mediator:
 ```
 
 ---
-class: left, middle, slide-title-alt
-# [Gif Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
-## DEMO: Make gif from S3 images, save back to S3
+class: slide-feature
+# Gif Result: .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+## Downloaded images from S3, made gif, saved gif to S3
+.feature-image[![AMP Thumbnail](./images/downloaded/gif-creator.gif)]
 
-???
-Go quick, similar to fetcher
 ---
 name: worker-email
 class: slide-primary
@@ -382,19 +388,15 @@ Will send a "did" message to mediator:
 ```
 
 ---
-class: left, middle, slide-title-alt
-# [Email Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
-## DEMO: Send an email
+class: slide-feature
+# Sent Email: .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+## Sent an email to specified addresses
+.feature-image[![AMP Thumbnail](./images/downloaded/email-sender.png)]
 
-???
-Go quick, similar to fetcher
 ---
+class: slide-section
 
-
-
-class: slide-secondary
 # Mediator
-
 .center[.size-height-full[![Data Flow Fetcher/Mediator](./images/diagrams/mediator.svg)]]
 
 ---
@@ -441,8 +443,8 @@ Decides what to do with it. We'll have it:
 ```
 
 ---
-class: left, middle, slide-title-alt
-# [Mediator Code] .inline-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
+class: slide-section
+# [Mediator Code] .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
 ## Receives messages, saves, sends out other messages
 
 ---
@@ -469,42 +471,55 @@ class: slide-secondary
 Lots of little pieces (microservice architecture) can be a management nightmare!
 
 ### CI Pipeline
-1. Plug in your CI pipeline to AWS to publish new versions of your code
-1. Small/simple workers make individual updates less scary and can be done more frequently - Branches are code debt!
+* Plug in your CI pipeline to AWS to publish new versions of your code
+* Small/simple workers make individual updates less scary and can be done more frequently - Branches are code debt!
 --
 count: false
 
 ### Small Pieces
-1. Data Flow allows for simple explicit interfaces
-1. Updates can be done with little worry to each small piece
+* Data Flow allows for simple explicit interfaces
+* Updates can be done with little worry to each small piece
 ---
 class: slide-primary
 # Pitfalls
 
-1. VPCs and Lambda are a giant PITA
-	1. Mediator can be run in a VPC, but need NAT gateway ($$$)
-	1. Then has access to VPC resources like DB/Cache
-	1. The more outside VPCs the better
+### VPCs and Lambda are a giant PITA
+* Mediator can be run in a VPC, but need NAT gateway ($$$)
+* Then has access to VPC resources like DB/Cache
+* The more outside VPCs the better
 --
 count: false
-1. Concurrent things are hard
-	1. Lots of things going on at once
-	1. Simultaneous logs and invocations all happening at once
---
-count: false
-1. Event hubs are all side effects
-	1. Not always explicit what will happen
---
-count: false
-1. Where else will you hit a scaling issue? Once you "leave lambda"
-	1. For us it was after our import was done
+
+### Concurrent things are hard
+* Lots of things going on at once
+* Simultaneous logs and invocations all happening at once
+
 ---
-class: large-content
+class: slide-primary
+# Pitfalls
+
+### Event hubs are all side effects
+* Not always explicit what will happen
+--
+count: false
+
+### Where else will you hit a scaling issue? Once you "leave lambda"
+--
+
+### Lambda Limits (can't ask for more)
+* 1.5GB RAM max
+* 512MB of disk in /tmp
+* 50MB zipped code / 250MB unzipped
+* Can't write to code dir
+
+---
+class: slide-primary, large-content
 # Try it for Yourself!
 
 * Use our project as a boilerplate
 * Provisioning script creates CloudFormation Template
 * All AWS Free Tier resources
+* `cd demo; npm run deploy` - Should be about all that's needed
 
 ---
 
@@ -535,10 +550,11 @@ class:  slide-primary
 .connect-logo[![GitHub Logo](./images/github-logo-light.svg)] eschwartz
 ]
 
+???
+ASK FOR QUESTIONS LAST
+- We will be at happy hour
 ---
-count: false
-# All done!
----
+
 name: image-amp-image-fetcher
 count: false
 class: center, middle, slide-primary
