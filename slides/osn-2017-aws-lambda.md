@@ -186,6 +186,7 @@ class: slide-secondary large-content
 * **1 Mediator** - Lambda function to coordinate it all
 
 ---
+name: worker-fetcher
 class: slide-primary
 # Fetcher
 ## Get an image via URL, save image to shared storage
@@ -209,6 +210,7 @@ Receives "please" message from outside source (timer/manually):
 ```
 
 ---
+name: worker-fetcher2
 class: slide-primary
 # Fetcher
 ## Get an image via URL, save image to shared storage
@@ -240,6 +242,7 @@ In depth
 * Save
 * Send Message Back
 ---
+name: worker-thumbnail
 class: slide-primary
 # Thumbnail Creator
 ## Load image from S3, resize/crop, save to S3
@@ -260,6 +263,7 @@ Receives "please" message (from mediator):
 ```
 
 ---
+name: worker-thumbnail2
 class: slide-primary
 # Thumbnail Creator
 ## Load image from S3, resize/crop, save to S3
@@ -286,6 +290,7 @@ class: left, middle, slide-title-alt
 ???
 Go quick, similar to fetcher
 ---
+name: worker-gif
 class: slide-primary
 # Gif Creator
 ## Load list of images from S3, creates GIF, saves
@@ -307,6 +312,7 @@ Receives "please" message (from mediator):
 ```
 
 ---
+name: worker-gif2
 class: slide-primary
 # Gif Creator
 ## Load image from S3, resize/crop, save
@@ -333,9 +339,7 @@ class: left, middle, slide-title-alt
 ???
 Go quick, similar to fetcher
 ---
-
-
-
+name: worker-email
 class: slide-primary
 # Email Sender
 ## Sends a message it's given
@@ -353,6 +357,7 @@ Receives "please" message (from mediator):
 ```
 
 ---
+name: worker-email2
 class: slide-primary
 # Email Sender
 ## Sends a message it's given
@@ -505,10 +510,9 @@ Save all images locally
 ---
 class:  slide-primary
 # Questions?
+### .inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
 
 ### Slides and demo code available online: http://github.com/aerisweather
-
-### .inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
 #### Free Demo Accounts API and Maps: https://aerisweather.com
 #### We're Hiring: https://aerisweather.com/careers/senior-api-developer/
 ## Thanks!
@@ -523,3 +527,25 @@ class:  slide-primary
 # Edan Schwartz 
 .connect-logo[![GitHub Logo](./images/github-logo-light.svg)] eschwartz
 ]
+
+---
+count: false
+# All done!
+---
+name: image-amp-image-fetcher
+count: false
+class: center, middle, slide-primary
+### AMP Image Fetcher Result:
+![AMP Image](./images/downloaded/amp-image-fetcher.png)
+---
+name: image-thumbnail-creator
+count: false
+class: center, middle, slide-primary
+### Thumbnail Creator Result:
+![AMP Image](./images/downloaded/thumbnail-creator.png)
+---
+name: image-gif-creator
+count: false
+class: center, middle, slide-primary
+### GIF Creator Result:
+![AMP Image](./images/downloaded/gif-creator.gif)
