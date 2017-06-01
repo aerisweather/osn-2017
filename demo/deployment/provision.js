@@ -97,11 +97,7 @@ const STACK_NAME = 'osn2017-aeris';
 						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
 						Environment:  {
 							Variables: {
-								DYNAMODB_TABLE_NAME:   {Ref: 'DynamoDBTable'},
-								/*AMP_IMAGE_FETCHER_ARN: {'Fn::GetAtt': ["LambdaFuncAmpImageFetcher", "Arn"]},
-								GIF_CREATOR_ARN:       {'Fn::GetAtt': ["LambdaFuncGifCreator", "Arn"]},
-								THUMBNAIL_CREATOR_ARN: {'Fn::GetAtt': ["LambdaFuncThumbnailCreator", "Arn"]},
-								EMAIL_SENDER_ARN:      {'Fn::GetAtt': ["LambdaFuncEmailSender", "Arn"]}*/
+								DYNAMODB_TABLE_NAME:   {Ref: 'DynamoDBTable'}
 							}
 						}
 					}
@@ -123,7 +119,6 @@ const STACK_NAME = 'osn2017-aeris';
 						Environment:  {
 							Variables: {
 								S3_BUCKET:     {'Ref': 'S3'},
-								MEDIATOR_ARN:  {'Fn::GetAtt': ["LambdaFuncMediator", "Arn"]},
 								CLIENT_ID:     'DsGVvRrlXhwuRAduyhx1V',
 								CLIENT_SECRET: 'HTQs6AKlrWLYcVSgEW96fKuGqM6gmTX2bMXumaH8'
 							}
@@ -146,8 +141,7 @@ const STACK_NAME = 'osn2017-aeris';
 						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
 						Environment:  {
 							Variables: {
-								S3_BUCKET:    {'Ref': 'S3'},
-								MEDIATOR_ARN: {'Fn::GetAtt': ["LambdaFuncMediator", "Arn"]}
+								S3_BUCKET:    {'Ref': 'S3'}
 							}
 						}
 					}
@@ -168,8 +162,7 @@ const STACK_NAME = 'osn2017-aeris';
 						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
 						Environment:  {
 							Variables: {
-								S3_BUCKET:    {'Ref': 'S3'},
-								MEDIATOR_ARN: {'Fn::GetAtt': ["LambdaFuncMediator", "Arn"]}
+								S3_BUCKET:    {'Ref': 'S3'}
 							}
 						}
 					}
