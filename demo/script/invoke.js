@@ -28,7 +28,7 @@ lambda.invoke({
 
 			// Print out location URL
 			if (msg.location) {
-				console.log(`Location URL:`);
+				console.log(`\nLocation URL:`);
 				console.log(`https://s3.amazonaws.com/${msg.location.Bucket}/${msg.location.Key}`)
 			}
 
