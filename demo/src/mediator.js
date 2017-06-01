@@ -73,7 +73,7 @@ const config = {
 			`).join('<br />')}
 		`,
 		subjectTemplate: ctx => `Your latest ${ctx.imageId} GIF, from OSN 2017!`,
-		to: ['eschwartz@aerisweather.com', 'smiller@aerisweather.com'],
+		to: ['eschwartz@aerisweather.com', 'smiller@aerisweather.com', 'aerisosn2017@gmail.com'],
 		from: 'eschwartz@aerisweather.com'
 	}
 };
