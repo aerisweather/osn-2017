@@ -1,13 +1,15 @@
 {
   "type": "please-fetch-amp-image",
-  "imageId": "temps",
+  "imageId": "severe",
   "layers": [
     "flat-dk",
-    "temperatures"
+    "alerts",
+    "radar",
+    "stormcells"
   ],
-  "width": 800,
-  "height": 600,
+  "width": 1200,
+  "height": 800,
   "center": "tulsa,ok",
   "zoom": 4,
-  "validTime": "current"
+  "validTime": "0"
 }
