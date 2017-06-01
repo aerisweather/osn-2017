@@ -12,7 +12,7 @@ exports.handler = async (message, context, callback) => {
 		console.log(`Received event: ${JSON.stringify(message, null, 2)}`);
 
 		// Save the incoming message to the DB
-		db.save(message);
+		await db.save(message);
 
 		// The Controller will figure out what to do with the
 		// incoming message, and return outgoing messages
@@ -122,7 +122,6 @@ async function Controller(message) {
 					imageId: message.imageId,
 					minValidTime: lastGifValidTime
 				});
-			console.log(`There are  ${imagesSinceLastGif.length} images since ${lastGifValidTime}`);
 
 			// If we have 5 images since our last GIF,
 			// then we're ready to create a new GIF
