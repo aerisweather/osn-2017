@@ -2,8 +2,8 @@
   "type": "please-create-thumbnail",
   "imageId": "temps",
   "location": {
-    "Bucket": "aeris-osn-2017",
-    "Key": "amp-image-fetcher/DsGVvRrlXhwuRAduyhx1V_HTQs6AKlrWLYcVSgEW96fKuGqM6gmTX2bMXumaH8/flat-dk,temperatures/800x600/tulsa,ok,4/20170524205755.png"
+    "Bucket": "osn2017-aeris-afd6c",
+    "Key": "amp-image-fetcher/DsGVvRrlXhwuRAduyhx1V_HTQs6AKlrWLYcVSgEW96fKuGqM6gmTX2bMXumaH8/flat-dk,satellite-vis,admin-cities-dk,radar,stormcells/800x600/minneapolis,mn,4/20170601195704_20170601195704.png"
   },
   "width": 200,
   "height": 200,

@@ -13,7 +13,7 @@ const lambda = new AWS.Lambda();
 const pleaseFetchAmpImage = require('../message/please-fetch-amp-image.json');
 
 const msgs = _.range(0, MSG_COUNT)
-	.map(n => Object.assign({}, pleaseFetchAmpImage, { validTime: `${n * -10}m` }));
+	.map(n => Object.assign({}, pleaseFetchAmpImage, { validTime: `${n * -30}m` }));
 
 
 Promise.all(

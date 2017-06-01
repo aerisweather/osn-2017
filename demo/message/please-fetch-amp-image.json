@@ -1,16 +1,16 @@
 {
   "type": "please-fetch-amp-image",
-  "imageId": "severe-2",
+  "imageId": "demo2",
   "layers": [
     "flat-dk",
-    "satellite-vis:30",
+    "satellite-vis",
     "admin-cities-dk",
     "radar",
     "stormcells"
   ],
   "width": 800,
   "height": 600,
-  "center": "el dorado,ar",
-  "zoom": 6,
-  "validTime": "current"
+  "center": "minneapolis,mn",
+  "zoom": 4,
+  "validTime": "-0h"
 }
