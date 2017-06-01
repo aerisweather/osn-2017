@@ -8,6 +8,11 @@ class: left, middle, slide-title
 
 ???
 Good luck! We got this!
+
+PHPStorm window up on presentation mode on projector
+- Terminal up with our server for slides
+- Terminal up with invoke script to fetch image
+- Terminal up with invoke script to fetch series of images
 ---
 class: slide-secondary
 
@@ -54,8 +59,8 @@ class: slide-primary
 
 # Our Needs
 
-1. Fine grained usage based pricing
-	1. Large data sets coming in hourly, every 6 hours
+1. Large data sets coming in hourly, every 6 hours
+	1. Large scale! Big data
 	1. Idle resources
 	1. Hard to scale up/down preemptively
 ???
@@ -64,32 +69,31 @@ Timers kind of work but off hour still paying for hour
 --
 count: false
 1. Parallel processing jobs
-	1. Each should finish < 30 seconds
 	1. Time to market is important for our customers
+	1. Old weather data isn't super useful
 	
 --
 count: false
 1. Reference old data, combine new data
+	1. Lots of calculations
 	1. More than just a pipeline
 	1. Forking and data re-use
---
-count: false
 
 .summary[Need: Very scalable compute solution, only charged us for time used, even less than an hour.]
 
-???
-What drove us to Lambda
 ---
 class: slide-primary
 # Why did we choose Lambda?
 
 1. Massive concurrency
-	1. Can spin up thousands of cores - Time to Market
-1. We have Spikey Workloads!
+	1. Can spin up thousands of functions
+	1. More parallel = Faster Time to Market
+1. We have VERY spikey Workloads
 	1. Fine grained cost helps a lot - sub hourly
 1. Metrics for each Lambda function
 	1. CloudWatch dashboards
-1. Competitors
+	1. CloudWatch Log Groups
+1. Other Solutions?
 	1. Google Cloud Functions – Still in Beta
 	1. Windows Azure Functions – It isn't AWS
 	1. Open Whisk – Uses containers, cool, not a lot of support
