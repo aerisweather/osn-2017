@@ -10,16 +10,19 @@ AWS.config.loadFromPath(`${__dirname}/../../deploy-credentials.ignore.json`);
 	const messages = [
 		{
 			type:        'please-create-thumbnail',
-			dateCreated: new Date(1000).getTime(),
+			dateCreated: 200,
 			target:      'thumbnail-creator',
 			// Payload
 			imageId:     'radar-mn',
 			validTime:   new Date(600).getTime(),
 			width:       100,
 			height:      100,
-			location:    's3://aeris-osn2017/image-ingestor/radar-mn/6'
+			location: {
+				Bucket: 'aeris-osn2017',
+				Key: 'image-ingestor/radar-mn/6'
+			}
 		},
-		{
+		/*{
 			type:        'please-create-thumbnail',
 			dateCreated: new Date(1005).getTime(),
 			target:      'thumbnail-creator',
@@ -73,12 +76,13 @@ AWS.config.loadFromPath(`${__dirname}/../../deploy-credentials.ignore.json`);
 			width:       100,
 			height:      100,
 			location:    's3://aeris-osn2017/thumbnail-creator/radar-mn/8'
-		}
+		}*/
 	];
 
 
 	// Save the messages to the db
-	await messages.map(msg => client.save(msg));
+	await Promise.all(messages.map(msg => client.save(msg)));
+	process.exit(0);
 
 	const singleResult = await client.findLatestValidTime({
 		type:    'did-create-thumbnail',
