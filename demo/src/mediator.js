@@ -58,7 +58,7 @@ const config = {
 	},
 	gif: {
 		frames: 5,
-		delay: 100,
+		delay: 250,
 		loop: true
 	},
 	email: {
