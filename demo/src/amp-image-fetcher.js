@@ -46,7 +46,8 @@ exports.handler = async (message, context, callback) => {
 		await s3.upload({
 			Bucket: uploadLocation.Bucket,
 			Key: uploadLocation.Key,
-			Body: image
+			Body: image,
+			ACL: 'public-read'
 		}).promise();
 
 		// Send a message to the mediator,
@@ -56,17 +57,17 @@ exports.handler = async (message, context, callback) => {
 			dateCreated: Date.now(),
 			imageId: message.imageId,
 			// Grab the valid time from the response headers
-			validTime: new Date(res.headers['x-aeris-valid-date']).getTime() / 1000,
+			validTime: new Date(res.headers['x-aeris-valid-date']).getTime(),
 			location: uploadLocation
 		};
 		await lambda.invoke({
-			FunctionName: process.env.MEDIATOR_ARN,
+			FunctionName: 'osn2017-mediator',
 			InvocationType: 'Event',
 			Payload: JSON.stringify(outMessage)
 		}).promise();
 		console.log(`Completed with: ${JSON.stringify(outMessage, null, 2)}`);
 
-		callback();
+		callback(null, outMessage);
 	}
 	catch (err) {
 		console.error(err);

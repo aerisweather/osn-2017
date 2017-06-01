@@ -40,13 +40,13 @@ exports.handler = async (message, context, callback) => {
 			dateCreated: Date.now()
 		};
 		await lambda.invoke({
-			FunctionName: process.env.MEDIATOR_ARN,
+			FunctionName: 'osn2017-mediator',
 			InvocationType: 'Event',
 			Payload: JSON.stringify(outMessage)
 		}).promise();
 		console.log(`Completed with: ${JSON.stringify(outMessage, null, 2)}`);
 
-		callback();
+		callback(null, outMessage);
 	}
 	catch (err) {
 		console.error(err);

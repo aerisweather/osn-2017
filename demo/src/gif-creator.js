@@ -63,7 +63,8 @@ exports.handler = async function (message, context, callback) {
 		await s3.upload({
 			Bucket: uploadLocation.Bucket,
 			Key: uploadLocation.Key,
-			Body: fs.createReadStream('/tmp/animated.gif')
+			Body: fs.createReadStream('/tmp/animated.gif'),
+			ACL: 'public-read'
 		}).promise();
 
 		// Send a message to the mediator,
@@ -75,8 +76,8 @@ exports.handler = async function (message, context, callback) {
 			validTime: message.validTime,
 			location: uploadLocation
 		};
-		lambda.invoke({
-			FunctionName: process.env.MEDIATOR_ARN,
+		await lambda.invoke({
+			FunctionName: 'osn2017-mediator',
 			InvocationType: 'Event',
 			Payload: JSON.stringify(outMessage)
 		}).promise();

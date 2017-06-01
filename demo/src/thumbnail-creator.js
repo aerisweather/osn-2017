@@ -48,7 +48,8 @@ exports.handler = async function (message, context, callback) {
 		await s3.upload({
 			Bucket: uploadLocation.Bucket,
 			Key: uploadLocation.Key,
-			Body: thumbnailReadStream
+			Body: thumbnailReadStream,
+			ACL: 'public-read'
 		}).promise();
 
 		const outMessage = {
@@ -62,7 +63,7 @@ exports.handler = async function (message, context, callback) {
 		// Send a message to the mediator,
 		// to let it know we're done
 		await lambda.invoke({
-			FunctionName: process.env.MEDIATOR_ARN,
+			FunctionName: 'osn2017-mediator',
 			InvocationType: 'Event',
 			Payload: JSON.stringify(outMessage)
 		}).promise();
