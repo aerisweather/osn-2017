@@ -35,7 +35,7 @@ class DynamoDbDataFlow {
 			IndexName: 'typeImageId-validTime-index',
 			Limit: limit,
 			KeyConditionExpression:
-				'typeImageId = :typeImageId AND' +
+				'typeImageId = :typeImageId AND ' +
 				'validTime BETWEEN :minValidTime AND :maxValidTime',
 			ExpressionAttributeValues: {
 				':typeImageId': `${type}:${imageId}`,
