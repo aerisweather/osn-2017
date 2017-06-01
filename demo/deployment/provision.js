@@ -161,7 +161,7 @@ const STACK_NAME = 'osn2017-aeris';
 							S3Key:    archiveKey
 						},
 						MemorySize:   128,
-						Timeout:      3,
+						Timeout:      30,
 						Handler:      'build/thumbnail-creator.handler',
 						Role:         {'Fn::GetAtt': ["LambdaIamRole", "Arn"]},
 						Environment:  {
