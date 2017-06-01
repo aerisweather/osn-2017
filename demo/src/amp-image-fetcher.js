@@ -7,6 +7,7 @@ const lambda = new AWS.Lambda();
 /**
  * Payload:
  * {
+ * 	 type: 'please-fetch-amp-image',
  * 	 imageId: string;
  * 	 layers: string[];
  * 	 width: number;
@@ -27,8 +28,7 @@ exports.handler = async (message, context, callback) => {
 			`/${message.layers.join(',')}`,
 			`/${message.width}x${message.height}`,
 			`/${message.center},${message.zoom}`,
-			`/${message.validTime}`,
-			`.png`
+			`/${message.validTime}.png`
 		].join('');
 
 		// Download the image from AMP
