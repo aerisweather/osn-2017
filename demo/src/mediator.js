@@ -12,28 +12,21 @@ exports.handler = async (message, context, callback) => {
 		console.log(`Received event: ${JSON.stringify(message, null, 2)}`);
 
 		// Save the incoming message to the DB
-		console.log('save inMsg...');
 		db.save(message);
-		console.log('save inMsg... done.');
 
 		// The Controller will figure out what to do with the
 		// incoming message, and return outgoing messages
-		console.log('controller...');
 		const outMessages = await Controller(message);
-		console.log('controller... done.');
 
 		// Save the outgoing messages to the DB
-		console.log('save outMsgs...');
 		await Promise.all(
 			outMessages.map(
 				msg => db.save(msg)
 			)
 		);
-		console.log('save outMsgs... done');
 
 		// Send all outgoing messages to their
 		// corresponding lambda functions
-		console.log('send outMsgs...');
 		console.log(JSON.stringify(outMessages, null, 2));
 		await Promise.all(
 			outMessages.map(
@@ -44,9 +37,9 @@ exports.handler = async (message, context, callback) => {
 				}).promise()
 			)
 		);
-		console.log('send outMsgs... done');
 
 		console.log(`Completed with: ${JSON.stringify(outMessages, null, 2)}`);
+		callback(null, outMessages);
 	}
 	catch(err) {
 		console.error(err);
@@ -65,14 +58,23 @@ const config = {
 	},
 	gif: {
 		frames: 5,
-		delay: 200,
+		delay: 100,
 		loop: true
 	},
 	email: {
-		bodyTemplate: (ctx) => `<pre>${JSON.stringify(ctx, null, 2)}</pre>`,
-		subjectTemplate: ctx => `Hello from OSN 2017!`,
-		to: ['eschwartz@aerisweather.com'],
-		from: ['eschwartz@aerisweather.com']
+		bodyTemplate: (ctx) => `
+			<h2>${ctx.imageId}</h2>
+			<h5>${new Date(ctx.validTime).toString()}</h5>
+			<img src="${ctx.gifUrl}" />
+			
+			<h4>Thumbnails:</h4>
+			${ctx.thumbnailUrls.map(url => `
+				<img src="${url}" />
+			`).join('<br />')}
+		`,
+		subjectTemplate: ctx => `Your latest ${ctx.imageId} GIF, from OSN 2017!`,
+		to: ['eschwartz@aerisweather.com', 'smiller@aerisweather.com'],
+		from: 'eschwartz@aerisweather.com'
 	}
 };
 
@@ -106,21 +108,21 @@ async function Controller(message) {
 
 			// First, find the last GIF we created
 			// for this imageId
-			console.log('findLatestValidTime...');
 			const lastCreatedGif = await db
 				.findLatestValidTime({
 					type: 'please-create-gif',
 					imageId: message.imageId,
 				});
-			console.log('findLatestValidTime... done.');
 
 			// Next, find all images since the GIF
+			const lastGifValidTime = lastCreatedGif ? lastCreatedGif.validTime : undefined;
 			const imagesSinceLastGif = await db
 				.findByValidTime({
 					type: 'did-fetch-image',
 					imageId: message.imageId,
-					minValidTime: lastCreatedGif ? lastCreatedGif.validTime : null
+					minValidTime: lastGifValidTime
 				});
+			console.log(`There are  ${imagesSinceLastGif.length} images since ${lastGifValidTime}`);
 
 			// If we have 5 images since our last GIF,
 			// then we're ready to create a new GIF
@@ -132,7 +134,7 @@ async function Controller(message) {
 					// Payload
 					imageId: message.imageId,
 					validTime: Math.max(...imagesSinceLastGif.map(msg => msg.validTime)),
-					location: imagesSinceLastGif.map(msg => msg.location),
+					locations: imagesSinceLastGif.map(msg => msg.location).reverse(),
 					gifDelay: config.gif.delay,
 					gifLoop: config.gif.loop
 				});
