@@ -1,9 +1,8 @@
 const AWS = new require('aws-sdk');
-const RedisDataFlow = new require('./db/RedisDataFlow');
+const DynamoDbDataFlow = require('./db/DynamoDbDataFlow');
 
-const db = new RedisDataFlow({
-	host: process.env.REDIS_HOSTNAME,
-	port: process.env.REDIS_PORT
+const db = new DynamoDbDataFlow({
+	tableName: process.env.DYNAMODB_TABLE_NAME
 });
 const lambda = new AWS.Lambda();
 
