@@ -28,6 +28,7 @@ class: slide-secondary
 	1. Reacts to various AWS events
 	1. DB Inserts via DynamoDB
 	1. API Events via API Gateway
+	1. SNS Messages
 --
 count: false
 1. Charged per 100ms used at CPU/RAM levels
