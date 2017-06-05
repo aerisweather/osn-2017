@@ -83,13 +83,16 @@ ol li p {
 	color: #EEE;
 	text-align: left;
 }
-.slide-feature .feature-image {
+.feature-image, .image-only {
 	display: block;
 	vertical-align: middle;
 	text-align: center;
 }
-.slide-feature .feature-image img {
-	max-height: 350px;
+.feature-image img {
+	max-height: 400px;
+}
+.image-only img {
+	max-height: 600px;
 }
 
 .slide-primary {
@@ -148,7 +151,7 @@ ol li p {
 }
 
 .large-content p, .large-content li, .large-content span {
-	font-size: 1.4em;
+	font-size: 1.2em;
 	line-height: 1.8em;
 }
 .remark-container {

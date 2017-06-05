@@ -176,7 +176,7 @@ More than a bunch of random functions calling each other
 ---
 class: slide-section
 # Demo .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
-## AWS Lambda - Creating Weather GIFs
+## AWS Lambda - Weather GIFs & Thumbnails
 
 ---
 class: slide-secondary large-content
@@ -184,6 +184,7 @@ class: slide-secondary large-content
 
 ## Challenge: Create animated GIFs from weather maps
 1. Download the latest weather maps every X minutes
+1. For each image create a thumbnail
 1. When we have enough map images, create an animated GIF
 1. Send out an email with the weather GIF, and image thumbnails
 
@@ -191,9 +192,8 @@ class: slide-secondary large-content
 
 ---
 class: slide-secondary
-# Demo - Design
 
-.center[.size-height-full[![Data Flow Icon](./images/diagrams/demo-full.svg)]]
+.image-only[![AMP Thumbnail](./images/downloaded/email-sender.gif)]
 
 ---
 class: slide-secondary large-content
@@ -203,6 +203,12 @@ class: slide-secondary large-content
 * **Shared File Storage** - Worker storage, S3
 * **4 Workers** - Lambda functions for Fetching, Thumbnail Creation, Gif Creation, Emailing
 * **1 Mediator** - Lambda function to coordinate it all
+
+---
+class: slide-secondary
+# Demo - Design
+
+.center[.size-height-full[![Data Flow Icon](./images/diagrams/demo-full.svg)]]
 
 ---
 name: worker-fetcher
@@ -398,7 +404,7 @@ Will send a "did" message to mediator:
 class: slide-feature
 # Sent Email: .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
 ## Sent an email to specified addresses
-.feature-image[![AMP Thumbnail](./images/downloaded/email-sender.png)]
+.feature-image[![AMP Thumbnail](./images/downloaded/email-sender.gif)]
 
 ---
 class: slide-section
@@ -459,6 +465,9 @@ class: slide-section
 # [Mediator Demo]
 ## Showing the whole workflow in action with CloudWatch Metrics
 
+???
+Mediator Demo
+
 ---
 class: slide-secondary
 # Coordinating Resources
@@ -495,7 +504,7 @@ count: false
 class: slide-primary
 # Pitfalls
 
-### Using Lambda with VPCs can be a giant PITA
+### Using Lambda inside VPCs can be a giant PITA
 * Mediator can be run in a VPC, but need NAT gateway ($$$)
 * Then has access to VPC resources like DB/Cache
 * The more outside of VPCs the better
