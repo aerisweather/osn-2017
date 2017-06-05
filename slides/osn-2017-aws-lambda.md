@@ -524,13 +524,6 @@ class: slide-primary, large-content
 
 ---
 
-@ todo:
-
-Fill in github link
-Remove credentials
-Save all images locally
-
----
 class:  slide-primary
 # Questions?
 ### .inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
@@ -573,3 +566,12 @@ count: false
 class: center, middle, slide-primary
 ### GIF Creator Result:
 ![AMP Image](./images/downloaded/gif-creator.gif)
+
+---
+@ todo:
+
+Fill in github link
+Remove credentials
+Save all images locally
+
+---
