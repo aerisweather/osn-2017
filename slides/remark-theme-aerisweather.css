@@ -58,9 +58,9 @@ ol li p {
 	padding: 5px;
 }
 
-.slide-title h2 {
+.slide-title .subtitle {
 	background-color: rgba(9, 25, 37, .9);
-	padding: 5px;
+	padding: 20px;
 }
 
 .slide-section {
@@ -182,4 +182,8 @@ ol li p {
 .presenter-block .connect-logo img {
 	height: 24px;
 	vertical-align: middle;
+}
+.presenter-block a {
+	color: #FFF;
+	text-decoration: none;
 }

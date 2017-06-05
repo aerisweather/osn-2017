@@ -2,10 +2,12 @@ class: left, middle, slide-title
 
 # Using AWS Lambda to Create Weather GIFs
 
-## .subtitle[Seth Miller and Edan Schwartz]
+.subtitle[
+## Seth Miller and Edan Schwartz
+.inline-logo[![GitHub Logo](./images/github-logo-light.svg)] [github.com/aerisweather/osn-2017](https://github.com/aerisweather/osn-2017)
 
-#### .inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
-
+.inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
+]
 ???
 Good luck! We got this!
 
@@ -320,11 +322,11 @@ Receives "please" message (from mediator):
   "gifLoop": true,
   "imageId": "demo",
   "locations": [
-    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]1.png" },
-    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]2.png" },
-    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]3.png" },
-    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]4.png" },
-    { "Bucket": "osn2017-aeris-abcd", "Key": "amp-image-fetcher/[bunch of stuff]5.png" }
+    { "Bucket": "osn2017-aeris-abcd", "Key": "[key]1.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "[key]2.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "[key]3.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "[key]4.png" },
+    { "Bucket": "osn2017-aeris-abcd", "Key": "[key]5.png" }
   ],
   "validTime": 2345678910
 }
@@ -453,6 +455,11 @@ class: slide-section
 ## Receives messages, saves, sends out other messages
 
 ---
+class: slide-section
+# [Mediator Demo]
+## Showing the whole workflow in action with CloudWatch Metrics
+
+---
 class: slide-secondary
 # Coordinating Resources
 
@@ -510,6 +517,7 @@ count: false
 
 ### Where else will you hit a scaling issue? Once you "leave lambda"
 --
+count: false
 
 ### Lambda Limits (can't ask for more)
 * 1.5GB RAM max
@@ -532,7 +540,7 @@ class:  slide-primary
 # Questions?
 ### .inline-logo[![AW Logo](./images/aeris-weather-logo.png)] Sponsored By: AerisWeather
 
-### Slides and demo code available online: http://github.com/aerisweather
+### .inline-logo[![GitHub Logo](./images/github-logo-light.svg)] [github.com/aerisweather/osn-2017](https://github.com/aerisweather/osn-2017)
 #### Free Demo Accounts API and Maps: https://aerisweather.com
 #### We're Hiring: https://aerisweather.com/careers/senior-api-developer/
 ## Thanks!
@@ -540,12 +548,12 @@ class:  slide-primary
 .presenter-block[
 .headshot[![Seth Miller](./images/headshots/seth_miller.jpg)]
 # Seth Miller
-.connect-logo[![GitHub Logo](./images/github-logo-light.svg)] four43
+.connect-logo[![GitHub Logo](./images/github-logo-light.svg)] [four43](https://github.com/four43)
 ]
 .presenter-block[
 .headshot[![Edan Schwartz](./images/headshots/edan_schwartz.jpg)]
 # Edan Schwartz 
-.connect-logo[![GitHub Logo](./images/github-logo-light.svg)] eschwartz
+.connect-logo[![GitHub Logo](./images/github-logo-light.svg)] [eschwartz](https://github.com/eschwartz)
 ]
 
 ???
