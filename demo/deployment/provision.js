@@ -312,6 +312,7 @@ async function executeChangeSet(template) {
 function uploadArchive({Bucket, Key}) {
 	console.log(`Uploading code to s3://${Bucket}/${Key}...`);
 	const archiveFile = `${__dirname}/archive.zip`;
+	execSync(`npm run build`, { cwd: `${__dirname}/..` });
 	execSync(`zip -r -9 ${archiveFile} ./`, {
 		cwd: `${__dirname}/..`
 	});
