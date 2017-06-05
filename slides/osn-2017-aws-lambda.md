@@ -13,6 +13,10 @@ PHPStorm window up on presentation mode on projector
 - Terminal up with our server for slides
 - Terminal up with invoke script to fetch image
 - Terminal up with invoke script to fetch series of images
+- Open CloudWatch dashboard
+- Open gmail account, to receive message
+- Invoke image fetcher once, to make sure everything is up and running
+
 ---
 class: slide-section
 
@@ -484,10 +488,10 @@ count: false
 class: slide-primary
 # Pitfalls
 
-### VPCs and Lambda are a giant PITA
+### Using Lambda with VPCs can be a giant PITA
 * Mediator can be run in a VPC, but need NAT gateway ($$$)
 * Then has access to VPC resources like DB/Cache
-* The more outside VPCs the better
+* The more outside of VPCs the better
 --
 count: false
 
