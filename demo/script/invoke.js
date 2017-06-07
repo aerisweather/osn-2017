@@ -42,7 +42,7 @@ lambda.invoke({
 
 				rl.question('Open the previous link? [y] ', (answer) => {
 					if(answer === '' || answer.toLowerCase() === 'y') {
-						execSync(`bash -c "wget ${location} --quiet -O /tmp/${msgMd5} && xdg-open /tmp/${msgMd5}"`);
+						execSync(`bash -c "wget '${location}' --quiet -O /tmp/${msgMd5} && xdg-open /tmp/${msgMd5}"`);
 					}
 					process.exit(0);
 				});
