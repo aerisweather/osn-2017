@@ -4,6 +4,12 @@ const fs = require('fs');
 
 AWS.config.loadFromPath(`${__dirname}/../deploy-credentials.ignore.json`);
 
+// You'll need keys to access the AerisWeather API.
+// You can sign up for a free dev account at
+// https://www.aerisweather.com/signup/developer/
+const CLIENT_ID = '[your_client_id]';
+const CLIENT_SECRET = '[your_client_secret]';
+
 const cf = new AWS.CloudFormation();
 const archiveKey = `code/archive-${Date.now()}.zip`;
 const STACK_NAME = 'osn2017-aeris';
@@ -11,7 +17,7 @@ const STACK_NAME = 'osn2017-aeris';
 (async () => {
 	try {
 		const bucketName = await getBucketName();
-		const cfTemplate = {
+    const cfTemplate = {
 			Resources: {
 				S3:                         {
 					Type:       'AWS::S3::Bucket',
@@ -123,8 +129,8 @@ const STACK_NAME = 'osn2017-aeris';
 						Environment:  {
 							Variables: {
 								S3_BUCKET:     {'Ref': 'S3'},
-								CLIENT_ID:     'DsGVvRrlXhwuRAduyhx1V',
-								CLIENT_SECRET: 'HTQs6AKlrWLYcVSgEW96fKuGqM6gmTX2bMXumaH8'
+								CLIENT_ID:     CLIENT_ID,
+								CLIENT_SECRET: CLIENT_SECRET
 							}
 						}
 					}
