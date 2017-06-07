@@ -67,11 +67,11 @@ You will need to create an AWS account, if you don't have one already. To config
 
 Then simply run 
 ```
-npm run deploy
+$ npm run deploy
 ```
 and CloudFormation will create all the necessary AWS resources.
 
-You can also take a look at our open source [deploy-cloud-formation](https://github.com/aerisweather/deploy-cloud-formation) tool, for simplified CF deployments. We also have a [deploy-lambda-function](https://github.com/aerisweather/node-deploy-lambda-function) tool for bundling and configuring lambda functions.
+You can also take a look at our open source [deploy-cloud-formation](https://github.com/aerisweather/deploy-cloud-formation) tool, for simplified CF deployments. We also have a [node-deploy-lambda-function](https://github.com/aerisweather/node-deploy-lambda-function) tool for bundling and configuring node lambda functions.
 
 ### CloudWatch Events
 
