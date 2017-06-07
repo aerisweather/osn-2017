@@ -177,6 +177,8 @@ More than a bunch of random functions calling each other
 class: slide-section
 # Demo .right-icon[![Data Flow Icon](./images/data-flow-icon.svg)]
 ## AWS Lambda - Weather GIFs & Thumbnails
+### .inline-logo[![GitHub Logo](./images/github-logo-light.svg)] github.com/aerisweather/osn-2017
+
 
 ---
 class: slide-secondary large-content
