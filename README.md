@@ -13,6 +13,8 @@ We're a small team, but we get to do a lot of interesting work. We're always mes
 
 https://www.aerisweather.com/careers/
 
+[![AerisWeather](http://branding.aerisweather.com/logo-dark-small.png)](https://www.aerisweather.com/careers/)
+
 ## Demo Code
 
 The code we're referencing in our talk is all located at [demo/src](demo/src).
