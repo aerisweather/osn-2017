@@ -63,7 +63,7 @@ To fetch images from the AerisWeather mapping platform, you will need to [sign u
 
 We use a CloudFormation template to manage our AWS resources. You can see the template and the CloudFormation deployment script in [demo/deployment/provision.js](demo/deployment/provision.js). 
 
-You will need to create an AWS account, if you don't have one already. To configure your credentials, copy [demo/deployment/deploy-credentials.example.json](demo/deployment/deploy-credentials.example.json) to [demo/deployment/deploy-credentials.ignore.json](demo/deployment/deploy-credentials.ignore.json), and enter in your AWS credentials.
+You will need to create an AWS account, if you don't have one already. To configure your credentials, copy [demo/deploy-credentials.example.json](demo/deploy-credentials.example.json) to [demo/deploy-credentials.ignore.json](demo/deploy-credentials.ignore.json), and enter in your AWS credentials.
 
 Then simply run 
 ```
