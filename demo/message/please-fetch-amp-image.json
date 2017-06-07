@@ -1,15 +1,17 @@
 {
   "type": "please-fetch-amp-image",
-  "imageId": "demo2",
+  "imageId": "OSN 2017 Demo",
   "layers": [
-    "flat-dk",
-    "satellite-vis",
-    "admin-cities-dk",
-    "radar"
+    "terrain",
+    "temperatures:blend(overlay):60",
+    "alerts:70",
+    "water-depth:scale-hsla(0,.94,0,.40,0,.4,0,1)",
+    "radar",
+    "admin-cities-dk"
   ],
   "width": 800,
   "height": 600,
-  "center": "minneapolis,mn",
-  "zoom": 4,
+  "center": "athens,ga",
+  "zoom": 5,
   "validTime": "-0h"
 }
