@@ -4,6 +4,7 @@ Demo code and slides from our Open Source North 2017 presentation.
 
 > We will perform a live demo using AWS Lambda to generate animated weather maps from AerisWeather data. This talk will go a step beyond the basic "Hello World" Lambda demonstration, and dive into some of the real-world challenges that you may run into with Lambda: "How do I logically organize my code? How do I maintain state in a "stateless" environment'? How do I define data transformation pipelines?" We will also talk through our decision-making process in using Lambda, and discuss how it it changed the way we think about our code.
 
+View Slideshow: https://aerisweather.github.io/osn-2017/slides/slideshow.html
 
 ## We're Hiring!
 
