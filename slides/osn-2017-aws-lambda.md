@@ -589,12 +589,3 @@ count: false
 class: center, middle, slide-primary
 ### GIF Creator Result:
 ![AMP Image](./images/downloaded/gif-creator.gif)
-
----
-@ todo:
-
-Fill in github link
-Remove credentials
-Save all images locally
-
----
