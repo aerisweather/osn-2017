@@ -48,6 +48,8 @@ http://localhost:8000/slideshow.html
 Serving HTTP on 0.0.0.0 port 8000 ...
 ```
 
+To view the slides, open http://localhost:8000/slideshow.html in your browser.
+
 ## Setup and Deployment
 
 Our demo is written for Node.js. If you don't have it already, you'll need to [download node](https://nodejs.org/en/download/).
