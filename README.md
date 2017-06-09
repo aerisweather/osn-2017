@@ -70,6 +70,7 @@ You will need to create an AWS account, if you don't have one already. To config
 
 Then simply run 
 ```
+$ cd demo
 $ npm run deploy
 ```
 and CloudFormation will create all the necessary AWS resources.
